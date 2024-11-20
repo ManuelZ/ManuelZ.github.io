@@ -1,0 +1,84 @@
+---
+// This page shows a list of cards representing the available projects.
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HorizontalCard from "../../components/HorizontalCard.astro";
+import { getCollection } from "astro:content";
+import createSlug from "../../lib/createSlug";
+import type { Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths({ paginate }) {
+  const projects = await getCollection("projects");
+  projects.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  console.log(projects);
+  return paginate(projects, { pageSize: 10 });
+}
+
+// type PaginateFunction:
+// https://github.com/withastro/astro/blob/46f6b386b3db6332f286d79958ef10261958cceb/packages/astro/src/%40types/astro.ts#L2903
+
+// Astro.props looks like this:
+// {
+//   page: {
+//     data: [],
+//     start: 0, end: 1, size: 2, total: 3, currentPage: 1, lastPage: 2,
+//     url: { current: '/projects', next: '/projects/2', prev: undefined, first: undefined, last: '/projects/2' }
+//   }
+// }
+
+// https://docs.astro.build/en/reference/modules/astro-content/#collectionentry
+const { page }: { page: Page<CollectionEntry<"projects">> } = Astro.props;
+
+// page.data looks like this
+// [
+//   {
+//     id: 'project1.md',
+//     slug: 'project1',
+//     body: '\r\n' +
+//       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor\r\n' +
+//     collection: 'projects',
+//     data: {
+//       title: 'TV Remote Automation',
+//       description: 'Automation of TV remote controls to assist older adults with button visibility and navigation.',
+//       pubDate: 2024-10-10T05:00:00.000Z,
+//       heroImage: '/post_img.webp',
+//       tags: [Array]
+//     },
+//     render: [AsyncFunction: render]
+//   },
+//   ...
+// ]
+---
+
+<BaseLayout title="Projects" sideBarActiveItemID="projects">
+  <div>
+    <div class="text-3xl w-full font-bold mb-5">Personal Projects</div>
+  </div>
+
+  {
+    page.data.length === 0 ? (
+      <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
+        <p class="font-bold">Sorry!</p>
+        <p>There are no projects to show at the moment. Check back later!</p>
+      </div>
+    ) : (
+      <ul>
+        {page.data.map((project) => (
+          <>
+            <HorizontalCard
+              title={project.data.title}
+              img={project.data.heroImage}
+              desc={project.data.description}
+              url={"/projects/" + createSlug(project.data.title, project.slug)}
+              target="_self"
+              badge={project.data.badge}
+              tags={project.data.tags}
+            />
+            <div class="divider my-0" />
+          </>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>
