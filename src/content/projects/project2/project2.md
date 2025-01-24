@@ -1,5 +1,5 @@
 ---
-title: "30K Cards Identification"
+title: "Cards Identification"
 description: "Card identification system that matches a query card to a 30K card database using fine-tuned deep feature embeddings and similarity search."
 pubDate: "Nov 20 2024"
 heroImage: "./project2-1.png"
