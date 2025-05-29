@@ -1,13 +1,13 @@
 ---
 title: "Cards Identification"
-description: "Cards identification system that matches a query card to a 30K card database using fine-tuned deep feature embeddings and similarity search."
+description: "Cards identification system that matches a query card to a 106K card database using fine-tuned deep feature embeddings and similarity search."
 pubDate: "Nov 20 2024"
 heroImage: "./project2-1.png"
 tags: ["Python", "OpenCV", "PyTorch", "Deep Learning"]
 
 ---
 
-Card identification system that matches a query card to a 30K card database using fine-tuned deep feature embeddings and similarity search.
+Card identification system that matches a query card to a 106K card database using fine-tuned deep feature embeddings and similarity search.
 
 - *Get the code: [Cards Identification Github project](https://github.com/ManuelZ/cards-identification)*
 - *Test the application: [Cards Identification Test App](https://huggingface.co/spaces/cestmanuel/cards-identification)*
@@ -19,7 +19,7 @@ This experiment is inspired by the problem of face identification, which tries t
 
 ### The dataset
 
-A total of 30467 unique cards from the game Magic: The gathering were downloaded from Scryfall.
+A total of 106K unique cards from the game Magic: The gathering were downloaded from Scryfall.
 
 While there are reprinted card editions with different artwork, only one version of each card is used in this experiment.
 
