@@ -9,7 +9,7 @@ tags: ["Python", "OpenCV", "PyTorch", "Deep Learning"]
 
 Card identification system that matches a query card to a 30K card database using fine-tuned deep feature embeddings and similarity search.
 
-- *Get the code: [Cards Identification Github project](https://github.com/ManuelZ/pairwise-similarity)*
+- *Get the code: [Cards Identification Github project](https://github.com/ManuelZ/cards-identification)*
 - *Test the application: [Cards Identification Test App](https://huggingface.co/spaces/cestmanuel/cards-identification)*
 
 ### Introduction
