@@ -27,7 +27,7 @@ While there are reprinted card editions with different artwork, only one version
 
 Fine-tune a feature extractor network using a similarity loss function: Circle Loss. Once the network is trained, use it to extract embeddings for the 106K cards in the dataset and create an index that's used to compare the stored representation vector of each card with the one of the query card.
 
-The training aims to make the network learn an embedding space where the embeddings of images of the same class will be appear close to each other and the embeddings of images of different classes will be far apart from each other.
+The training aims to make the network learn an embedding space where the embeddings of images of the same individual will appear close to each other and the embeddings of images of different individuals will be far apart from each other.
 
 This learning scheme requires feeding the loss function with examples of cards from the same class as well as cards from different classes.
 
