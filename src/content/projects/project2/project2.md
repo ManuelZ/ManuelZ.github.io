@@ -40,7 +40,7 @@ Additionally, the learning process involves using examples of cards from differe
 
 The loss function used comes from the "PyTorch Metric Learning" library, which makes it easy to apply a pairwise loss function to a batch of images. Following the assumption that each card is unique (i.e., there is only one observation per class), the loss function also handles creating all possible pairs or triplets from a batch to feed them to its core logic. An interesting aspect is how the data is fed: pairs are not provided one by one.
 
-The SelfSupervisedLoss class is used to wrap the loss function, so that it can consume two tensors, one of images and one of augmented images. Otherwise, it would have to receive tensors and labels. The idea here is that there is only one image per class, so the process of assigning labels can be automated internally without risk.
+The `SelfSupervisedLoss` class is used to wrap the loss function, so that it can consume two tensors, one of images and one of augmented images. Otherwise, it would have to receive tensors and labels. The idea here is that there is only one image per class, so the process of assigning labels can be automated internally without risk.
 
 The `CircleLoss` class has an internal method `_compute_loss` where the logic of the paper is applied (notice the use of `logsumexp` and `soft_plus`). It also has access, through inheritance, to some important methods: `.mat_based_loss`, `.compute_loss` and `.forward`. This class descends from `torch.nn.Module`, that's why it depends on a `.forward` method, which gets called when an instance of `CircleLoss` is called.
 
