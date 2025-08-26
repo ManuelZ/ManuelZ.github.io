@@ -6,16 +6,14 @@ heroImage: "./media/project3-1.jpg"
 tags: ["Python", "OpenCV", "YOLOv8", "Deep Learning"]
 ---
 
-
-
-A practical application of computer vision to improve TV remote usability for older adults. Using Deep learning for object detection, the solution provides feedback on the current state of a TV. The model was tested using an edge device, the JeVois-A33 smart machine camera, which runs a fine-tuned YOLOv8 ONNX model to detect and interpret one TV interface in a controlled environment, aiming to provide a more intuitive and accessible user experience.
+A practical application of computer vision to improve smart TV remote usability for older adults. Using deep learning for object detection, the solution provides feedback on the current state of a smart TV. The model was tested using an edge device, the JeVois-A33 smart machine camera, which runs a fine-tuned YOLOv8 ONNX model to detect and interpret one smart TV interface, aiming to provide a more intuitive and accessible user experience.
 
 - *Get the code: [TV Automation Github project](https://github.com/ManuelZ/tv_automation)*
 
 ### Introduction
 
 Older adults may find some TV remotes challenging to use due to their lack of texture and color cues. 
-For example, some might know how to change TV channels but struggle to switch between apps, such as from Netflix to 
+For example, some might know how to change channels but struggle to switch between apps, such as from Netflix to 
 regular television. This is how a TV remote could look like:
 
 ![Remote](media/project3-2.png)
