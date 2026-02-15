@@ -41,17 +41,18 @@ The pipeline supports multiple detectors:
 -	**ORB**: Fast binary descriptor, matched with Hamming distance.
 -	**SIFT**: Scale-invariant float descriptor, matched with L2 distance.
 The matcher auto-selects the appropriate algorithm based on descriptor type: FLANN uses LSH (Locality Sensitive Hashing) for binary descriptors like ORB, and KDTree for float descriptors like SIFT.
+
 For filtering bad matches, the pipeline supports two strategies:
--	**Lowe's ratio test** discards any match where the nearest neighbor isn't significantly closer than the second-nearest, effective, but the threshold is heuristic, and an aggressive setting can reject correct matches [4]. 
+-	**Lowe's ratio test** discards any match where the nearest neighbor isn't significantly closer than the second-nearest, effective, but the threshold is heuristic, and an aggressive setting can reject correct matches [3]. 
 -	**Cross-check matching**, where a match is only accepted if both descriptors agree they're each other's best match. 
-In practice, it may be better to skip aggressive pre-filtering entirely and let RANSAC handle the outliers during essential matrix estimation, since RANSAC is designed for exactly this kind of noisy data [4].
+In practice, it may be better to skip aggressive pre-filtering entirely and let RANSAC handle the outliers during essential matrix estimation, since RANSAC is designed for exactly this kind of noisy data [3].
 
 ### Essential Matrix estimation
 This is the core geometric computation. Given matched point pairs `(x₁, x₂)` across two frames, the Essential Matrix `E` encodes the rotation and translation between the camera views through the epipolar constraint:
 
 x₂ᵀ E x₁ = 0
 
-The matrix is estimated using the 5-point algorithm with USAC_MAGSAC RANSAC, a modern robust estimator that outperforms classic RANSAC on contaminated data [6]. A valid essential matrix must have singular values of the form `[σ, σ, 0]`. When this constraint is violated, which happens in practice due to noise, the code corrects `E` by decomposing it with SVD, averaging the first two singular values, zeroing the third, and reconstructing. This is a direct implementation of the approach described in [2].
+The matrix is estimated using the 5-point algorithm with USAC_MAGSAC RANSAC, a modern robust estimator that outperforms classic RANSAC on contaminated data [4]. A valid essential matrix must have singular values of the form `[σ, σ, 0]`. When this constraint is violated, which happens in practice due to noise, the code corrects `E` by decomposing it with SVD, averaging the first two singular values, zeroing the third, and reconstructing. This is a direct implementation of the approach described in [2].
 
 ### Essential matrix decomposition
 The essential matrix encodes the relative rotation and translation between two camera views. OpenCV decomposes it to recover the camera's motion, automatically selecting the physically valid solution. Reconstructed points must appear in front of both cameras, not behind them. Translation is recovered only up to scale, meaning we know the direction the camera moved but not by how much. This is the fundamental limitation of monocular SLAM.
@@ -83,4 +84,14 @@ The pipeline runs on KITTI's cam0 because the pipeline needs grayscale input, bu
 
 ### Visualization
 The Open3D viewer uses a multithreaded architecture: SLAM runs on a background daemon thread, while the GUI event loop stays on the main thread (an OS requirement). Communication happens via `app.post_to_main_thread()` for thread-safe scene updates. The viewer shows the estimated trajectory (blue) alongside KITTI ground truth (green), with interactive controls for camera navigation, point size adjustment, and pause/resume.
+
+## References
+
+[1] K. M. Lynch and F. C. Park, Modern Robotics: Mechanics, Planning, and Control. Cambridge, UK: Cambridge University Press, 2017.
+
+[2] X. Gao and T. Zhang, Introduction to Visual SLAM: From Theory to Practice. Singapore: Springer Singapore, 2021. doi: 10.1007/978-981-16-4939-4.
+
+[3] F. Fraundorfer and D. Scaramuzza, “Visual Odometry : Part II: Matching, Robustness, Optimization, and Applications,” IEEE Robot. Automat. Mag., vol. 19, no. 2, pp. 78–90, Jun. 2012, doi: 10.1109/MRA.2012.2182810.
+
+[4] OpenCV, "Evaluating OpenCV's New RANSAC," Available: https://opencv.org/blog/evaluating-opencvs-new-ransacs.
 
