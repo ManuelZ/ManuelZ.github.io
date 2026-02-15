@@ -3,7 +3,7 @@ title: "Using CVAT and YOLOv8 for Automatic Image Annotation"
 description: "Deploying a custom YOLOv8 model with CVAT and Nuclio for efficient image annotation."
 pubDate: "Nov 20 2024"
 heroImage: "./cvat_automatic_annotation_2.png"
-tags: ["CVAT"]
+tags: ["CVAT", "YOLOv8", "Deep Learning"]
 ---
 
 ## Automatic annotation using CVAT
