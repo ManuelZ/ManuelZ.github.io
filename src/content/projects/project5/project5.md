@@ -6,7 +6,9 @@ heroImage: "./media/vo-demo.jpg"
 tags: ["Python", "OpenCV", "Open3D", "Computer Vision", "Visual SLAM"]
 ---
 
-*Monocular visual odometry, the front end of a SLAM system, estimating camera motion and 3D structure from a single camera. Backend components like loop closure and global optimization are not covered here.*
+Monocular visual odometry, the front end of a SLAM system, estimating camera motion and 3D structure from a single camera. Backend components like loop closure and global optimization are not covered here.
+
+- *Get the code: [Monocular Visual SLAM Github project](https://github.com/ManuelZ/monocular-slam)*
 
 <div style="text-align: center;">
 
