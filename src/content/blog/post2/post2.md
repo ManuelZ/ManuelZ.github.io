@@ -3,7 +3,7 @@ title: "Exploring 3D Mesh Modeling and Texturing in Webots"
 description: "This post shows the process of importing and texturing 3D models in Webots for testing my Document Scanner Simulation."
 pubDate: "Jan 16 2025"
 heroImage: "./images/sketchfab_original.png"
-tags: ["Webots", "Simulation", "3D Modeling"]
+tags: ["Webots", "Simulation", "3D Modeling", "Computer Vision"]
 ---
 
 ## Introduction

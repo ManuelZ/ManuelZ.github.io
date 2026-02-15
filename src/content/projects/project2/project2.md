@@ -3,7 +3,7 @@ title: "Cards Identification"
 description: "Cards identification system that matches a query card to a 106K card database using fine-tuned deep feature embeddings and similarity search."
 pubDate: "Nov 20 2024"
 heroImage: "./project2-1.png"
-tags: ["Python", "OpenCV", "PyTorch", "Deep Learning"]
+tags: ["Python", "OpenCV", "PyTorch", "Deep Learning", "Computer Vision"]
 
 ---
 

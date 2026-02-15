@@ -3,7 +3,7 @@ title: "TV Remote Automation"
 description: "Automation of TV remote controls to assist older adults with button visibility and navigation."
 pubDate: "Nov 20 2024"
 heroImage: "./media/project3-1.jpg"
-tags: ["Python", "OpenCV", "YOLOv8", "Deep Learning"]
+tags: ["Python", "OpenCV", "YOLOv8", "Deep Learning", "Computer Vision"]
 ---
 
 A practical application of computer vision to improve smart TV remote usability for older adults. Using deep learning for object detection, the solution provides feedback on the current state of a smart TV. The model was tested using an edge device, the JeVois-A33 smart machine camera, which runs a fine-tuned YOLOv8 ONNX model to detect and interpret one smart TV interface, aiming to provide a more intuitive and accessible user experience.
