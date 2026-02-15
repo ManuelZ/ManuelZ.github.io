@@ -1,17 +1,18 @@
 ---
-title: "A Visual Odometry Pipeline with Python and OpenCV"
+title: "Building a Visual Odometry Pipeline with Python and OpenCV"
 description: "Monocular visual odometry, the front end of a SLAM system, estimating camera motion and 3D structure from a single camera. Backend components like loop closure and global optimization are not covered here."
-pubDate: "Aug 15 2025"
+pubDate: "Feb 15 2026"
 heroImage: "./media/vo-demo.jpg"
 tags: ["Python", "OpenCV", "Open3D", "Computer Vision"]
 ---
-# Building a Visual Odometry Pipeline with Python and OpenCV
 
 *Monocular visual odometry, the front end of a SLAM system, estimating camera motion and 3D structure from a single camera. Backend components like loop closure and global optimization are not covered here.*
 
 <div style="text-align: center;">
 
 [![Demo](https://img.youtube.com/vi/QXuMJuNvdR4/0.jpg)](https://youtu.be/QXuMJuNvdR4)
+
+*Click to watch the demo video*
 
 </div>
 
