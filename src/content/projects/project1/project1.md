@@ -12,6 +12,15 @@ A document scanner application that converts images of rectangular documents int
 
 - *Get the code: [Document Scanner Simulation Github project](https://github.com/ManuelZ/document_scanner_simulation)*
 
+<div style="text-align: center;">
+
+[![Demo](https://img.youtube.com/vi/W8c69ahIbvU/0.jpg)](https://youtu.be/W8c69ahIbvU)
+
+*Click to watch the demo video*
+
+</div>
+
+
 ## Components
 
 The simulation is composed of five important components:
