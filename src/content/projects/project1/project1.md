@@ -12,14 +12,10 @@ A document scanner application that converts images of rectangular documents int
 
 - *Get the code: [Document Scanner Simulation Github project](https://github.com/ManuelZ/document_scanner_simulation)*
 
-<div style="text-align: center;">
 
-[![Demo](https://img.youtube.com/vi/W8c69ahIbvU/0.jpg)](https://youtu.be/W8c69ahIbvU)
-
-*Click to watch the demo video*
-
-</div>
-
+<video width="1920" height="1080" controls>
+ <source src="https://github.com/ManuelZ/document_scanner_simulation/assets/115771/081c2016-b77b-4e0f-889d-1e3c95975116" type="video/webm">
+</video>
 
 ## Components
 
@@ -54,16 +50,6 @@ Using a simple OpenCV UI, it's possible to find good parameters for segmenting p
 ![HSV GUI](images/hsv_gui.png)
 
 
-## Demo
-
-This demonstration shows how the simulation works. There are two displays: the top left display shows the raw footage from the camera, and the bottom left display shows the rectified document.
-
-
-<video width="1920" height="1080" controls>
- <source src="https://github.com/ManuelZ/document_scanner_simulation/assets/115771/081c2016-b77b-4e0f-889d-1e3c95975116" type="video/webm">
-</video>
-
-The found document may be vertically flipped because no capability has been introduced to understand the content of the paper. It is only oriented so that the long side is positioned vertically.
 
 
 ## Observations
