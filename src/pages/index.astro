@@ -41,52 +41,56 @@ const projects = (await getCollection("projects"))
     >
       <thead>
         <tr>
-          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold"
-            >Category</th
-          >
-          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold"
-            >Skills</th
-          >
+          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold">Category</th>
+          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold">Tools</th>
+          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold">Skills</th>
         </tr>
       </thead>
       <tbody>
         <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold"
-            >Languages</td
-          >
-          <td class="px-4 py-2 border border-gray-300"
-            >Python, C++, JavaScript</td
-          >
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Programming</td>
+          <td class="px-4 py-2 border border-gray-300">Python, C++</td>
+          <td class="px-4 py-2 border border-gray-300">OOP, Multiprocessing</td>
         </tr>
         <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold"
-            >Computer Vision</td
-          >
-          <td class="px-4 py-2 border border-gray-300">OpenCV, PyTorch, TensorFlow</td>
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Classical Vision</td>
+          <td class="px-4 py-2 border border-gray-300">OpenCV</td>
+          <td class="px-4 py-2 border border-gray-300">Image Processing, Feature Extraction</td>
         </tr>
         <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold"
-            >Robotics</td
-          >
-          <td class="px-4 py-2 border border-gray-300"
-            >ROS2, Webots Robot Simulator, Exudyn Multibody Dynamics Simulator</td
-          >
+          <td class="px-4 py-2 border border-gray-300 font-semibold">3D Vision</td>
+          <td class="px-4 py-2 border border-gray-300">Open3D</td>
+          <td class="px-4 py-2 border border-gray-300">Camera Calibration, Multi-View Geometry, Bird's-eye View, Visual Odometry, Pose Estimation, Epipolar Geometry, Simulation</td>
         </tr>
         <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">CAD</td>
-          <td class="px-4 py-2 border border-gray-300"
-            >Solid Edge, Inventor, Alibre</td
-          >
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Deep Learning</td>
+          <td class="px-4 py-2 border border-gray-300">PyTorch, YOLO</td>
+          <td class="px-4 py-2 border border-gray-300">Object Detection, Tracking, Segmentation, Deep Metric Learning, Experiment Tracking</td>
         </tr>
         <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Dev</td>
-          <td class="px-4 py-2 border border-gray-300"
-            >Linux, Docker, Pytest, MyPy, Git</td
-          >
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Model Optimization</td>
+          <td class="px-4 py-2 border border-gray-300">TensorRT, NVIDIA Nsight Systems</td>
+          <td class="px-4 py-2 border border-gray-300">Quantization, Inference Benchmarking, Latency Profiling</td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Data Pipeline</td>
+          <td class="px-4 py-2 border border-gray-300">CVAT, FiftyOne</td>
+          <td class="px-4 py-2 border border-gray-300">Data Curation, Deduplication, Model-assisted Verification</td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Embedded & Edge</td>
+          <td class="px-4 py-2 border border-gray-300">Jetson Orin, Raspberry Pi</td>
+          <td class="px-4 py-2 border border-gray-300">Multi-stream Processing, Hardware-Accelerated Decoding</td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-2 border border-gray-300 font-semibold">Development</td>
+          <td class="px-4 py-2 border border-gray-300">Linux, Docker, Git, Pytest, MyPy</td>
+          <td class="px-4 py-2 border border-gray-300">Containerized Deployment, Unit Testing</td>
         </tr>
         <tr class="hover:bg-gray-50">
           <td class="px-4 py-2 border border-gray-300 font-semibold">Cloud</td>
-          <td class="px-4 py-2 border border-gray-300">AWS, Azure</td>
+          <td class="px-4 py-2 border border-gray-300">AWS, Azure, RunPod</td>
+          <td class="px-4 py-2 border border-gray-300">Serverless Deployment, GPU Inference</td>
         </tr>
       </tbody>
     </table>
