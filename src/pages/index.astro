@@ -5,12 +5,11 @@ import Badge from "../components/Badge.astro";
 import { getCollection } from "astro:content";
 import createSlug from "../lib/createSlug";
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-const last_posts = posts.slice(0, 3);
+const latest_posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
 
-const projects = (await getCollection("projects"))
+const latest_projects = (await getCollection("projects"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 
@@ -205,10 +204,10 @@ const skills_cell_class = "text-gray-600 text-[13.5px]";
     </tbody>
   </table>
 
-  <div class="text-3xl w-full font-bold mb-2 mt-10">Projects</div>
+  <div class="text-3xl w-full font-bold mb-2 mt-10">Latest projects</div>
 
   {
-    projects.map((project) => (
+    latest_projects.map((project) => (
       <>
         <HorizontalCard
           title={project.data.title}
@@ -226,7 +225,7 @@ const skills_cell_class = "text-gray-600 text-[13.5px]";
   <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
 
   {
-    last_posts.map((post) => (
+    latest_posts.map((post) => (
       <>
         <HorizontalCard
           title={post.data.title}
