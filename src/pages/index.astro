@@ -5,7 +5,7 @@ import { getCollection } from "astro:content";
 import createSlug from "../lib/createSlug";
 
 const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const last_posts = posts.slice(0, 3);
 
@@ -17,82 +17,176 @@ const projects = (await getCollection("projects"))
 <BaseLayout sideBarActiveItemID="home">
   <div class="pb-8 mt-5">
     <div class="text-5xl font-bold">I'm Manuel</div>
-    <div class="text-3xl py-3 font-bold">
-      Computer Vision Engineer
-    </div>
-
+    <div class="text-3xl py-3 font-bold">Computer Vision Engineer</div>
     <div class="py-2">
       <text class="text-lg">
-        I am a Computer Vision Engineer with experience in deep learning, data pipelines, and model deployment across edge
-        and cloud environments. Skilled in segmentation, object detection, classification and anomaly detection. 
+        I am a Computer Vision Engineer with experience in deep learning, data
+        pipelines, and model deployment across edge and cloud environments.
+        Skilled in segmentation, object detection, classification and anomaly
+        detection.
       </text>
     </div>
   </div>
 
-  <div class="w-full max-w-4xl px-4 pb-12">
-    <table
-      class="w-full text-left table-auto border-collapse border border-gray-300 bg-white shadow-lg"
-    >
-      <thead>
-        <tr>
-          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold">Category</th>
-          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold">Tools</th>
-          <th class="px-4 py-2 border border-gray-300 bg-gray-100 font-bold">Skills</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Programming</td>
-          <td class="px-4 py-2 border border-gray-300">Python, C++</td>
-          <td class="px-4 py-2 border border-gray-300">OOP, Multiprocessing</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Classical Vision</td>
-          <td class="px-4 py-2 border border-gray-300">OpenCV</td>
-          <td class="px-4 py-2 border border-gray-300">Image Processing, Feature Extraction</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">3D Vision</td>
-          <td class="px-4 py-2 border border-gray-300">Open3D</td>
-          <td class="px-4 py-2 border border-gray-300">Camera Calibration, Multi-View Geometry, Bird's-eye View, Visual Odometry, Pose Estimation, Epipolar Geometry, Simulation</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Deep Learning</td>
-          <td class="px-4 py-2 border border-gray-300">PyTorch, YOLO</td>
-          <td class="px-4 py-2 border border-gray-300">Object Detection, Tracking, Segmentation, Deep Metric Learning, Experiment Tracking</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Model Optimization</td>
-          <td class="px-4 py-2 border border-gray-300">TensorRT, NVIDIA Nsight Systems</td>
-          <td class="px-4 py-2 border border-gray-300">Quantization, Inference Benchmarking, Latency Profiling</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Data Pipeline</td>
-          <td class="px-4 py-2 border border-gray-300">CVAT, FiftyOne</td>
-          <td class="px-4 py-2 border border-gray-300">Data Curation, Deduplication, Model-assisted Verification</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Embedded & Edge</td>
-          <td class="px-4 py-2 border border-gray-300">Jetson Orin, Raspberry Pi</td>
-          <td class="px-4 py-2 border border-gray-300">Multi-stream Processing, Hardware-Accelerated Decoding</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Development</td>
-          <td class="px-4 py-2 border border-gray-300">Linux, Docker, Git, Pytest, MyPy</td>
-          <td class="px-4 py-2 border border-gray-300">Containerized Deployment, Unit Testing</td>
-        </tr>
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border border-gray-300 font-semibold">Cloud</td>
-          <td class="px-4 py-2 border border-gray-300">AWS, Azure, RunPod</td>
-          <td class="px-4 py-2 border border-gray-300">Serverless Deployment, GPU Inference</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div class="text-3xl w-full font-bold mb-4">Skills</div>
 
-  <div>
-    <div class="text-3xl w-full font-bold mb-2">Projects</div>
-  </div>
+  <table class="skills-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Tools</th>
+        <th>Skills</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="cat-label">Programming</span></td>
+        <td>
+          <span class="badge">Python</span>
+          <span class="badge">C++</span>
+        </td>
+        <td class="skills-cell">OOP, Multiprocessing</td>
+      </tr>
+      <tr>
+        <td><span class="cat-label">Classical Vision</span></td>
+        <td>
+          <span class="badge">OpenCV</span>
+        </td>
+        <td class="skills-cell">Image Processing, Feature Extraction</td>
+      </tr>
+      <tr>
+        <td><span class="cat-label">3D Vision</span></td>
+        <td>
+          <span class="badge">Open3D</span>
+        </td>
+        <td class="skills-cell"
+          >Camera Calibration, Multi-View Geometry, Stereo Vision, Bird's-eye
+          View, Visual Odometry, Pose Estimation, Epipolar Geometry, Simulation</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Deep Learning</span></td>
+        <td>
+          <span class="badge">PyTorch</span>
+          <span class="badge">PyTorch Lightning</span>
+          <span class="badge">YOLO</span>
+          <span class="badge">SAM2</span>
+          <span class="badge">PyTorch Metric Learning</span>
+          <span class="badge">Anomalib</span>
+          <span class="badge">HF Transformers</span>
+          <span class="badge">FAISS</span>
+        </td>
+        <td class="skills-cell"
+          >Object Detection, Segmentation, Anomaly Detection, Classification,
+          Deep Metric Learning, Model Evaluation (precision, recall, F1, AP)</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Deployment &amp; Optimization</span></td>
+        <td>
+          <span class="badge">TensorRT</span>
+          <span class="badge">ONNX</span>
+          <span class="badge">DeepStream</span>
+          <span class="badge">Docker</span>
+          <span class="badge">AWS</span>
+          <span class="badge">Azure</span>
+          <span class="badge">RunPod</span>
+          <span class="badge">Vast.ai</span>
+          <span class="badge">NVIDIA Nsight Systems</span>
+        </td>
+        <td class="skills-cell"
+          >Model Serving, Containerized Deployment, Edge Inference, Pipeline
+          Deployment, Serverless GPU Inference, Quantization, Pruning, FP16 /
+          INT8 Inference, Inference Benchmarking, Latency Profiling, GPU Memory
+          Profiling</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Embedded &amp; Edge</span></td>
+        <td>
+          <span class="badge">Jetson Orin</span>
+          <span class="badge">Raspberry Pi</span>
+          <span class="badge">OAK-D Lite</span>
+        </td>
+        <td class="skills-cell"
+          >RTSP, GStreamer Pipeline Development, Multi-stream Processing, Batch
+          Processing, Video Analytics</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Tracking</span></td>
+        <td>
+          <span class="badge">SORT</span>
+          <span class="badge">ByteTrack</span>
+          <span class="badge">DeepSORT</span>
+          <span class="badge">TrackEval</span>
+        </td>
+        <td class="skills-cell"
+          >Multi-object Tracking, Tracklet Association, Kalman Filtering,
+          Tracking Evaluation (HOTA, MOTA, IDF1)</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Experiment Tracking</span></td>
+        <td>
+          <span class="badge">Weights & Biases</span>
+          <span class="badge">Optuna</span>
+        </td>
+        <td class="skills-cell"
+          >Hyperparameter Tuning, Run Comparison, Metric Visualization</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Data Pipeline</span></td>
+        <td>
+          <span class="badge">Albumentations</span>
+          <span class="badge">CVAT</span>
+          <span class="badge">LabelMe</span>
+          <span class="badge">FiftyOne</span>
+          <span class="badge">Roboflow</span>
+          <span class="badge">NumPy</span>
+          <span class="badge">Pandas</span>
+          <span class="badge">Matplotlib</span>
+          <span class="badge">Apache Airflow</span>
+        </td>
+        <td class="skills-cell"
+          >Workflow Automation, Data Curation, Deduplication, Model-assisted
+          Verification, Format conversion (COCO, DAVIS, YOLO)</td
+        >
+      </tr>
+
+      <tr>
+        <td><span class="cat-label">Robotics &amp; Simulation</span></td>
+        <td>
+          <span class="badge">ROS2</span>
+          <span class="badge">Webots</span>
+          <span class="badge">Exudyn</span>
+        </td>
+        <td class="skills-cell">Robotics Simulation, Multibody Dynamics</td>
+      </tr>
+      <tr>
+        <td><span class="cat-label">Development</span></td>
+        <td>
+          <span class="badge">Linux</span>
+          <span class="badge">Git</span>
+          <span class="badge">Pytest</span>
+          <span class="badge">MyPy</span>
+        </td>
+        <td class="skills-cell"
+          >Version Control, Shell Scripting, Unit Testing, Static Type Checking,
+          Debugging</td
+        >
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="text-3xl w-full font-bold mb-2 mt-10">Projects</div>
 
   {
     projects.map((project) => (
@@ -110,9 +204,7 @@ const projects = (await getCollection("projects"))
     ))
   }
 
-  <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
-  </div>
+  <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
 
   {
     last_posts.map((post) => (
@@ -130,3 +222,88 @@ const projects = (await getCollection("projects"))
     ))
   }
 </BaseLayout>
+
+<style>
+  .skills-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2.5rem;
+  }
+
+  .skills-table thead th {
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+  .skills-table thead th:first-child {
+    width: 150px;
+    padding-left: 20px;
+  }
+
+  .skills-table thead th:nth-child(2) {
+    width: 38%;
+  }
+
+  .skills-table tbody tr {
+    transition: background 0.12s;
+  }
+
+  .skills-table tbody tr:not(:last-child) td {
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .skills-table tbody tr:hover {
+    background: #fafbfc;
+  }
+
+  .skills-table td {
+    padding: 12px 20px;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .skills-table td:first-child {
+    border-left: 4px solid #4f46e5;
+    padding-left: 16px;
+  }
+
+  .cat-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 5px;
+    margin: 2px 3px 2px 0;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+
+  .skills-cell {
+    color: #4b5563;
+    font-size: 13.5px;
+  }
+</style>
