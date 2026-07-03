@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HorizontalCard from "../components/HorizontalCard.astro";
+import Badge from "../components/Badge.astro";
 import { getCollection } from "astro:content";
 import createSlug from "../lib/createSlug";
 
@@ -12,6 +13,10 @@ const last_posts = posts.slice(0, 3);
 const projects = (await getCollection("projects"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
+
+const category_label_class =
+  "text-xs font-bold tracking-[0.06em] uppercase whitespace-nowrap";
+const skills_cell_class = "text-gray-600 text-[13.5px]";
 ---
 
 <BaseLayout sideBarActiveItemID="home">
@@ -30,73 +35,83 @@ const projects = (await getCollection("projects"))
 
   <div class="text-3xl w-full font-bold mb-4">Skills</div>
 
-  <table class="skills-table">
-    <thead>
+  <table
+    class="w-full border-separate border-spacing-0 rounded-xl overflow-hidden mb-10 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.05)]"
+  >
+    <thead
+      class="[&_th]:px-5 [&_th]:py-3 [&_th]:text-[11px] [&_th]:font-semibold [&_th]:tracking-widest [&_th]:uppercase [&_th]:text-gray-500 [&_th]:bg-gray-50 [&_th]:border-b [&_th]:border-gray-200 [&_th]:text-left"
+    >
       <tr>
-        <th>Category</th>
-        <th>Tools</th>
+        <th class="w-[150px]">Category</th>
+        <th class="w-[38%]">Tools</th>
         <th>Skills</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody
+      class="[&_tr]:transition-colors [&_tr]:duration-[120ms] [&_tr:nth-child(even)]:bg-gray-50 [&_tr:hover]:bg-gray-100 [&_tr:not(:last-child)_td]:border-b [&_tr:not(:last-child)_td]:border-gray-100 [&_td]:px-5 [&_td]:py-3 [&_td]:align-top [&_td]:text-sm [&_td]:leading-[1.6]"
+    >
       <tr>
-        <td><span class="cat-label">Programming</span></td>
+        <td><span class={category_label_class}>Programming</span></td>
         <td>
-          <span class="badge">Python</span>
-          <span class="badge">C++</span>
+          <Badge>Python</Badge>
+          <Badge>C++</Badge>
         </td>
-        <td class="skills-cell">OOP, Multiprocessing</td>
+        <td class={skills_cell_class}>OOP, Multiprocessing</td>
       </tr>
       <tr>
-        <td><span class="cat-label">Classical Vision</span></td>
+        <td><span class={category_label_class}>Classical Vision</span></td>
         <td>
-          <span class="badge">OpenCV</span>
+          <Badge>OpenCV</Badge>
         </td>
-        <td class="skills-cell">Image Processing, Feature Extraction</td>
+        <td class={skills_cell_class}>Image Processing, Feature Extraction</td>
       </tr>
       <tr>
-        <td><span class="cat-label">3D Vision</span></td>
+        <td><span class={category_label_class}>3D Vision</span></td>
         <td>
-          <span class="badge">Open3D</span>
+          <Badge>Open3D</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Camera Calibration, Multi-View Geometry, Stereo Vision, Bird's-eye
           View, Visual Odometry, Pose Estimation, Epipolar Geometry, Simulation</td
         >
       </tr>
 
       <tr>
-        <td><span class="cat-label">Deep Learning</span></td>
+        <td><span class={category_label_class}>Deep Learning</span></td>
         <td>
-          <span class="badge">PyTorch</span>
-          <span class="badge">PyTorch Lightning</span>
-          <span class="badge">YOLO</span>
-          <span class="badge">SAM2</span>
-          <span class="badge">PyTorch Metric Learning</span>
-          <span class="badge">Anomalib</span>
-          <span class="badge">HF Transformers</span>
-          <span class="badge">FAISS</span>
+          <Badge>PyTorch</Badge>
+          <Badge>PyTorch Lightning</Badge>
+          <Badge>YOLO</Badge>
+          <Badge>SAM2</Badge>
+          <Badge>PyTorch Metric Learning</Badge>
+          <Badge>Anomalib</Badge>
+          <Badge>HF Transformers</Badge>
+          <Badge>FAISS</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Object Detection, Segmentation, Anomaly Detection, Classification,
           Deep Metric Learning, Model Evaluation (precision, recall, F1, AP)</td
         >
       </tr>
 
       <tr>
-        <td><span class="cat-label">Deployment &amp; Optimization</span></td>
+        <td
+          ><span class={category_label_class}
+            >Deployment &amp; Optimization</span
+          ></td
+        >
         <td>
-          <span class="badge">TensorRT</span>
-          <span class="badge">ONNX</span>
-          <span class="badge">DeepStream</span>
-          <span class="badge">Docker</span>
-          <span class="badge">AWS</span>
-          <span class="badge">Azure</span>
-          <span class="badge">RunPod</span>
-          <span class="badge">Vast.ai</span>
-          <span class="badge">NVIDIA Nsight Systems</span>
+          <Badge>TensorRT</Badge>
+          <Badge>ONNX</Badge>
+          <Badge>DeepStream</Badge>
+          <Badge>Docker</Badge>
+          <Badge>AWS</Badge>
+          <Badge>Azure</Badge>
+          <Badge>RunPod</Badge>
+          <Badge>Vast.ai</Badge>
+          <Badge>NVIDIA Nsight Systems</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Model Serving, Containerized Deployment, Edge Inference, Pipeline
           Deployment, Serverless GPU Inference, Quantization, Pruning, FP16 /
           INT8 Inference, Inference Benchmarking, Latency Profiling, GPU Memory
@@ -105,80 +120,85 @@ const projects = (await getCollection("projects"))
       </tr>
 
       <tr>
-        <td><span class="cat-label">Embedded &amp; Edge</span></td>
+        <td><span class={category_label_class}>Embedded &amp; Edge</span></td>
         <td>
-          <span class="badge">Jetson Orin</span>
-          <span class="badge">Raspberry Pi</span>
-          <span class="badge">OAK-D Lite</span>
+          <Badge>Jetson Orin</Badge>
+          <Badge>Raspberry Pi</Badge>
+          <Badge>OAK-D Lite</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >RTSP, GStreamer Pipeline Development, Multi-stream Processing, Batch
           Processing, Video Analytics</td
         >
       </tr>
 
       <tr>
-        <td><span class="cat-label">Tracking</span></td>
+        <td><span class={category_label_class}>Tracking</span></td>
         <td>
-          <span class="badge">SORT</span>
-          <span class="badge">ByteTrack</span>
-          <span class="badge">DeepSORT</span>
-          <span class="badge">TrackEval</span>
+          <Badge>SORT</Badge>
+          <Badge>ByteTrack</Badge>
+          <Badge>DeepSORT</Badge>
+          <Badge>TrackEval</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Multi-object Tracking, Tracklet Association, Kalman Filtering,
           Tracking Evaluation (HOTA, MOTA, IDF1)</td
         >
       </tr>
 
       <tr>
-        <td><span class="cat-label">ML Experimentation</span></td>
+        <td><span class={category_label_class}>ML Experimentation</span></td>
         <td>
-          <span class="badge">Weights &amp; Biases</span>
-          <span class="badge">Optuna</span>
+          <Badge>Weights &amp; Biases</Badge>
+          <Badge>Optuna</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Hyperparameter Tuning, Run Comparison, Metric Visualization</td
         >
       </tr>
 
       <tr>
-        <td><span class="cat-label">Data Pipeline</span></td>
+        <td><span class={category_label_class}>Data Pipeline</span></td>
         <td>
-          <span class="badge">Albumentations</span>
-          <span class="badge">CVAT</span>
-          <span class="badge">LabelMe</span>
-          <span class="badge">FiftyOne</span>
-          <span class="badge">Roboflow</span>
-          <span class="badge">NumPy</span>
-          <span class="badge">Pandas</span>
-          <span class="badge">Matplotlib</span>
-          <span class="badge">Apache Airflow</span>
+          <Badge>Albumentations</Badge>
+          <Badge>CVAT</Badge>
+          <Badge>LabelMe</Badge>
+          <Badge>FiftyOne</Badge>
+          <Badge>Roboflow</Badge>
+          <Badge>NumPy</Badge>
+          <Badge>Pandas</Badge>
+          <Badge>Matplotlib</Badge>
+          <Badge>Apache Airflow</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Workflow Automation, Data Curation, Deduplication, Model-assisted
           Verification, Format Conversion (COCO, DAVIS, YOLO)</td
         >
       </tr>
 
       <tr>
-        <td><span class="cat-label">Robotics &amp; Simulation</span></td>
+        <td
+          ><span class={category_label_class}>Robotics &amp; Simulation</span
+          ></td
+        >
         <td>
-          <span class="badge">ROS2</span>
-          <span class="badge">Webots</span>
-          <span class="badge">Exudyn</span>
+          <Badge>ROS2</Badge>
+          <Badge>Webots</Badge>
+          <Badge>Exudyn</Badge>
         </td>
-        <td class="skills-cell">Robotics Simulation, Multibody Dynamics</td>
+        <td class={skills_cell_class}
+          >Robotics Simulation, Multibody Dynamics</td
+        >
       </tr>
       <tr>
-        <td><span class="cat-label">Development</span></td>
+        <td><span class={category_label_class}>Development</span></td>
         <td>
-          <span class="badge">Linux</span>
-          <span class="badge">Git</span>
-          <span class="badge">Pytest</span>
-          <span class="badge">MyPy</span>
+          <Badge>Linux</Badge>
+          <Badge>Git</Badge>
+          <Badge>Pytest</Badge>
+          <Badge>MyPy</Badge>
         </td>
-        <td class="skills-cell"
+        <td class={skills_cell_class}
           >Version Control, Shell Scripting, Unit Testing, Static Type Checking,
           Debugging</td
         >
@@ -222,91 +242,3 @@ const projects = (await getCollection("projects"))
     ))
   }
 </BaseLayout>
-
-<style>
-  .skills-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.06),
-      0 0 0 1px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2.5rem;
-  }
-
-  .skills-table thead th {
-    padding: 12px 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #6b7280;
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: left;
-  }
-
-  .skills-table thead th:first-child {
-    width: 150px;
-    padding-left: 20px;
-  }
-
-  .skills-table thead th:nth-child(2) {
-    width: 38%;
-  }
-
-  .skills-table tbody tr {
-    transition: background 0.12s;
-  }
-
-  .skills-table tbody tr:nth-child(even) {
-    background: #f9fafb;
-  }
-
-  .skills-table tbody tr:not(:last-child) td {
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .skills-table tbody tr:hover {
-    background: #f3f4f6;
-  }
-
-  .skills-table td {
-    padding: 12px 20px;
-    vertical-align: top;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  .skills-table td:first-child {
-    padding-left: 20px;
-  }
-
-  .cat-label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .badge {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 5px;
-    margin: 2px 3px 2px 0;
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    white-space: nowrap;
-  }
-
-  .skills-cell {
-    color: #4b5563;
-    font-size: 13.5px;
-  }
-</style>

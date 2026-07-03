@@ -18,6 +18,7 @@ const {
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(pubDate).format("ll");
 import { Image } from "astro:assets";
+import Badge from "../components/Badge.astro";
 ---
 
 <BaseLayout
@@ -43,16 +44,19 @@ import { Image } from "astro:assets";
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
       {pubDate && <time>{displayDate}</time>}
       <br />
-      {badge && <div class="badge badge-secondary my-1">{badge}</div>}
+      {
+        badge && (
+          <Badge variant="solid" class="my-1">
+            {badge}
+          </Badge>
+        )
+      }
       {
         tags &&
           tags.map((tag) => (
-            <a
-              href={`/blog/tag/${tag}`}
-              class="badge badge-outline ml-2 no-underline"
-            >
+            <Badge href={`/blog/tag/${tag}`} class="ml-2">
               {tag}
-            </a>
+            </Badge>
           ))
       }
       {

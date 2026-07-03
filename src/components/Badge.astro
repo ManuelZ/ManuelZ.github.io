@@ -1,0 +1,28 @@
+---
+interface Props {
+  variant?: "solid" | "outline";
+  href?: string;
+  class?: string;
+}
+
+const { variant = "outline", href, class: extraClass = "" } = Astro.props;
+
+const variantClass =
+  variant === "solid"
+    ? "badge badge-secondary"
+    : "badge bg-gray-100 text-gray-700 border-gray-200";
+
+const finalClass = `${variantClass} ${extraClass}`.trim();
+---
+
+{
+  href ? (
+    <a href={href} class={`${finalClass} no-underline`}>
+      <slot />
+    </a>
+  ) : (
+    <span class={finalClass}>
+      <slot />
+    </span>
+  )
+}
