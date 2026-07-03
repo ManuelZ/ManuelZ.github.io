@@ -242,7 +242,7 @@ const projects = (await getCollection("projects"))
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #9ca3af;
+    color: #6b7280;
     background: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
     text-align: left;
@@ -261,12 +261,16 @@ const projects = (await getCollection("projects"))
     transition: background 0.12s;
   }
 
+  .skills-table tbody tr:nth-child(even) {
+    background: #f9fafb;
+  }
+
   .skills-table tbody tr:not(:last-child) td {
     border-bottom: 1px solid #f3f4f6;
   }
 
   .skills-table tbody tr:hover {
-    background: #fafbfc;
+    background: #f3f4f6;
   }
 
   .skills-table td {
@@ -277,8 +281,7 @@ const projects = (await getCollection("projects"))
   }
 
   .skills-table td:first-child {
-    border-left: 4px solid #4f46e5;
-    padding-left: 16px;
+    padding-left: 20px;
   }
 
   .cat-label {
