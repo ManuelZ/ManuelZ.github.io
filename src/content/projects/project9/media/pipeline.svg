@@ -1,0 +1,208 @@
+<svg xmlns='http://www.w3.org/2000/svg' style='font-size:initial;' viewBox="0 0 1645.92 2112.62" data-pikchr-date="20260403102956">
+<path d="M318.96,74.16L578.16,74.16A14.4 14.4 0 0 0 592.56 59.76L592.56,16.56A14.4 14.4 0 0 0 578.16 2.16L318.96,2.16A14.4 14.4 0 0 0 304.56 16.56L304.56,59.76A14.4 14.4 0 0 0 318.96 74.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="28.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvurisrcbin</text>
+<text x="448.56" y="48.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Source 0</text>
+<path d="M1067.76,74.16L1326.96,74.16A14.4 14.4 0 0 0 1341.36 59.76L1341.36,16.56A14.4 14.4 0 0 0 1326.96 2.16L1067.76,2.16A14.4 14.4 0 0 0 1053.36 16.56L1053.36,59.76A14.4 14.4 0 0 0 1067.76 74.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="28.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvurisrcbin</text>
+<text x="1197.36" y="48.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Source 1</text>
+<path d="M693.36,210.96L952.56,210.96A14.4 14.4 0 0 0 966.96 196.56L966.96,153.36A14.4 14.4 0 0 0 952.56 138.96L693.36,138.96A14.4 14.4 0 0 0 678.96 153.36L678.96,196.56A14.4 14.4 0 0 0 693.36 210.96Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="164.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvstreammux</text>
+<text x="822.96" y="185.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Batch frames</text>
+<polygon points="750.96,138.96 746.64,127.44 755.28,127.44" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,74.16L448.56,92.16L750.96,92.16L750.96,133.2"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="894.96,138.96 890.64,127.44 899.28,127.44" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,74.16L1197.36,92.16L894.96,92.16L894.96,133.2"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="822.96,246.96 818.64,235.44 827.28,235.44" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,210.96L822.96,241.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M693.36,318.96L952.56,318.96A14.4 14.4 0 0 0 966.96 304.56L966.96,261.36A14.4 14.4 0 0 0 952.56 246.96L693.36,246.96A14.4 14.4 0 0 0 678.96 261.36L678.96,304.56A14.4 14.4 0 0 0 693.36 318.96Z"  style="fill:rgb(216,191,216);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="272.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvinfer</text>
+<text x="822.96" y="293.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">YOLO26 detector (PGIE)</text>
+<polygon points="822.96,354.96 818.64,343.44 827.28,343.44" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,318.96L822.96,349.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M693.36,426.96L952.56,426.96A14.4 14.4 0 0 0 966.96 412.56L966.96,369.36A14.4 14.4 0 0 0 952.56 354.96L693.36,354.96A14.4 14.4 0 0 0 678.96 369.36L678.96,412.56A14.4 14.4 0 0 0 693.36 426.96Z"  style="fill:rgb(216,191,216);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="380.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvtracker</text>
+<text x="822.96" y="401.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Multi-object tracker</text>
+<polygon points="822.96,498.96 818.64,487.44 827.28,487.44" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,426.96L822.96,493.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M693.36,570.96L952.56,570.96A14.4 14.4 0 0 0 966.96 556.56L966.96,513.36A14.4 14.4 0 0 0 952.56 498.96L693.36,498.96A14.4 14.4 0 0 0 678.96 513.36L678.96,556.56A14.4 14.4 0 0 0 693.36 570.96Z"  style="fill:rgb(216,191,216);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="524.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvinfer</text>
+<text x="822.96" y="545.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">PPE detector (SGIE)</text>
+<polygon points="822.96,606.96 818.64,595.44 827.28,595.44" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,570.96L822.96,601.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M693.36,678.96L952.56,678.96A14.4 14.4 0 0 0 966.96 664.56L966.96,621.36A14.4 14.4 0 0 0 952.56 606.96L693.36,606.96A14.4 14.4 0 0 0 678.96 621.36L678.96,664.56A14.4 14.4 0 0 0 693.36 678.96Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="632.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvstreamdemux</text>
+<text x="822.96" y="653.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Split batch</text>
+<circle cx="1038.96" cy="534.96" r="5.76" style="fill:rgb(0,0,0);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M966.96,534.96L1038.96,534.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M1096.56,520.56L1326.96,520.56A14.4 14.4 0 0 0 1341.36 506.16L1341.36,462.96A14.4 14.4 0 0 0 1326.96 448.56L1096.56,448.56A14.4 14.4 0 0 0 1082.16 462.96L1082.16,506.16A14.4 14.4 0 0 0 1096.56 520.56Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1211.76" y="474.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">PPEViolationDetector</text>
+<text x="1211.76" y="494.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">SGIE probe</text>
+<path d="M1038.96,534.96L1082.16,484.56"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M1096.56,621.36L1326.96,621.36A14.4 14.4 0 0 0 1341.36 606.96L1341.36,563.76A14.4 14.4 0 0 0 1326.96 549.36L1096.56,549.36A14.4 14.4 0 0 0 1082.16 563.76L1082.16,606.96A14.4 14.4 0 0 0 1096.56 621.36Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1211.76" y="575.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">suppress_default_text</text>
+<text x="1211.76" y="595.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">SGIE C++ probe</text>
+<path d="M1038.96,534.96L1082.16,585.36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M362.16,570.96L592.56,570.96A14.4 14.4 0 0 0 606.96 556.56L606.96,513.36A14.4 14.4 0 0 0 592.56 498.96L362.16,498.96A14.4 14.4 0 0 0 347.76 513.36L347.76,556.56A14.4 14.4 0 0 0 362.16 570.96Z"  style="fill:rgb(175,238,238);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="477.36" y="524.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">measure_fps_probe</text>
+<text x="477.36" y="545.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">SGIE probe</text>
+<path d="M678.96,534.96L606.96,534.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M318.96,815.76L578.16,815.76A14.4 14.4 0 0 0 592.56 801.36L592.56,758.16A14.4 14.4 0 0 0 578.16 743.76L318.96,743.76A14.4 14.4 0 0 0 304.56 758.16L304.56,801.36A14.4 14.4 0 0 0 318.96 815.76Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="769.68" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvvideoconvert</text>
+<text x="448.56" y="789.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Pre-OSD</text>
+<path d="M318.96,916.56L578.16,916.56A14.4 14.4 0 0 0 592.56 902.16L592.56,858.96A14.4 14.4 0 0 0 578.16 844.56L318.96,844.56A14.4 14.4 0 0 0 304.56 858.96L304.56,902.16A14.4 14.4 0 0 0 318.96 916.56Z"  style="fill:rgb(240,230,140);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="870.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvosdbin</text>
+<text x="448.56" y="890.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Overlay renderer</text>
+<path d="M318.96,1017.36L578.16,1017.36A14.4 14.4 0 0 0 592.56 1002.96L592.56,959.76A14.4 14.4 0 0 0 578.16 945.36L318.96,945.36A14.4 14.4 0 0 0 304.56 959.76L304.56,1002.96A14.4 14.4 0 0 0 318.96 1017.36Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="971.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">tee</text>
+<text x="448.56" y="991.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Split stream (--record only)</text>
+<path d="M318.96,1118.16L578.16,1118.16A14.4 14.4 0 0 0 592.56 1103.76L592.56,1060.56A14.4 14.4 0 0 0 578.16 1046.16L318.96,1046.16A14.4 14.4 0 0 0 304.56 1060.56L304.56,1103.76A14.4 14.4 0 0 0 318.96 1118.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="1072.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">queue</text>
+<text x="448.56" y="1092.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Publish (--record only)</text>
+<path d="M318.96,1218.96L578.16,1218.96A14.4 14.4 0 0 0 592.56 1204.56L592.56,1161.36A14.4 14.4 0 0 0 578.16 1146.96L318.96,1146.96A14.4 14.4 0 0 0 304.56 1161.36L304.56,1204.56A14.4 14.4 0 0 0 318.96 1218.96Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="1172.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvvideoconvert</text>
+<text x="448.56" y="1193.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">RGB conversion</text>
+<path d="M318.96,1319.76L578.16,1319.76A14.4 14.4 0 0 0 592.56 1305.36L592.56,1262.16A14.4 14.4 0 0 0 578.16 1247.76L318.96,1247.76A14.4 14.4 0 0 0 304.56 1262.16L304.56,1305.36A14.4 14.4 0 0 0 318.96 1319.76Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="1273.68" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">capsfilter</text>
+<text x="448.56" y="1293.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">RGB (NVMM)</text>
+<path d="M318.96,1420.56L578.16,1420.56A14.4 14.4 0 0 0 592.56 1406.16L592.56,1362.96A14.4 14.4 0 0 0 578.16 1348.56L318.96,1348.56A14.4 14.4 0 0 0 304.56 1362.96L304.56,1406.16A14.4 14.4 0 0 0 318.96 1420.56Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="1374.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">appsink</text>
+<text x="448.56" y="1394.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Frame output</text>
+<path d="M1067.76,815.76L1326.96,815.76A14.4 14.4 0 0 0 1341.36 801.36L1341.36,758.16A14.4 14.4 0 0 0 1326.96 743.76L1067.76,743.76A14.4 14.4 0 0 0 1053.36 758.16L1053.36,801.36A14.4 14.4 0 0 0 1067.76 815.76Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="769.68" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvvideoconvert</text>
+<text x="1197.36" y="789.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Pre-OSD</text>
+<path d="M1067.76,916.56L1326.96,916.56A14.4 14.4 0 0 0 1341.36 902.16L1341.36,858.96A14.4 14.4 0 0 0 1326.96 844.56L1067.76,844.56A14.4 14.4 0 0 0 1053.36 858.96L1053.36,902.16A14.4 14.4 0 0 0 1067.76 916.56Z"  style="fill:rgb(240,230,140);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="870.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvosdbin</text>
+<text x="1197.36" y="890.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Overlay renderer</text>
+<path d="M1067.76,1017.36L1326.96,1017.36A14.4 14.4 0 0 0 1341.36 1002.96L1341.36,959.76A14.4 14.4 0 0 0 1326.96 945.36L1067.76,945.36A14.4 14.4 0 0 0 1053.36 959.76L1053.36,1002.96A14.4 14.4 0 0 0 1067.76 1017.36Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="971.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">tee</text>
+<text x="1197.36" y="991.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Split stream (--record only)</text>
+<path d="M1067.76,1118.16L1326.96,1118.16A14.4 14.4 0 0 0 1341.36 1103.76L1341.36,1060.56A14.4 14.4 0 0 0 1326.96 1046.16L1067.76,1046.16A14.4 14.4 0 0 0 1053.36 1060.56L1053.36,1103.76A14.4 14.4 0 0 0 1067.76 1118.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="1072.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">queue</text>
+<text x="1197.36" y="1092.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Publish (--record only)</text>
+<path d="M1067.76,1218.96L1326.96,1218.96A14.4 14.4 0 0 0 1341.36 1204.56L1341.36,1161.36A14.4 14.4 0 0 0 1326.96 1146.96L1067.76,1146.96A14.4 14.4 0 0 0 1053.36 1161.36L1053.36,1204.56A14.4 14.4 0 0 0 1067.76 1218.96Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="1172.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvvideoconvert</text>
+<text x="1197.36" y="1193.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">RGB conversion</text>
+<path d="M1067.76,1319.76L1326.96,1319.76A14.4 14.4 0 0 0 1341.36 1305.36L1341.36,1262.16A14.4 14.4 0 0 0 1326.96 1247.76L1067.76,1247.76A14.4 14.4 0 0 0 1053.36 1262.16L1053.36,1305.36A14.4 14.4 0 0 0 1067.76 1319.76Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="1273.68" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">capsfilter</text>
+<text x="1197.36" y="1293.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">RGB (NVMM)</text>
+<path d="M1067.76,1420.56L1326.96,1420.56A14.4 14.4 0 0 0 1341.36 1406.16L1341.36,1362.96A14.4 14.4 0 0 0 1326.96 1348.56L1067.76,1348.56A14.4 14.4 0 0 0 1053.36 1362.96L1053.36,1406.16A14.4 14.4 0 0 0 1067.76 1420.56Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1197.36" y="1374.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">appsink</text>
+<text x="1197.36" y="1394.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Frame output</text>
+<polygon points="448.56,743.76 444.24,732.24 452.88,732.24" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,678.96L822.96,696.96L448.56,696.96L448.56,738"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,743.76 1193.04,732.24 1201.68,732.24" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,678.96L822.96,696.96L1197.36,696.96L1197.36,738"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="448.56,844.56 444.24,833.04 452.88,833.04" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,815.76L448.56,838.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="448.56,945.36 444.24,933.84 452.88,933.84" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,916.56L448.56,939.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="448.56,1046.16 444.24,1034.64 452.88,1034.64" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,1017.36L448.56,1040.4"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="448.56,1146.96 444.24,1135.44 452.88,1135.44" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,1118.16L448.56,1141.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="448.56,1247.76 444.24,1236.24 452.88,1236.24" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,1218.96L448.56,1242"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="448.56,1348.56 444.24,1337.04 452.88,1337.04" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,1319.76L448.56,1342.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,844.56 1193.04,833.04 1201.68,833.04" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,815.76L1197.36,838.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,945.36 1193.04,933.84 1201.68,933.84" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,916.56L1197.36,939.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,1046.16 1193.04,1034.64 1201.68,1034.64" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,1017.36L1197.36,1040.4"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,1146.96 1193.04,1135.44 1201.68,1135.44" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,1118.16L1197.36,1141.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,1247.76 1193.04,1236.24 1201.68,1236.24" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,1218.96L1197.36,1242"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="1197.36,1348.56 1193.04,1337.04 1201.68,1337.04" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,1319.76L1197.36,1342.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M16.56,1424.16L246.96,1424.16A14.4 14.4 0 0 0 261.36 1409.76L261.36,1359.36A14.4 14.4 0 0 0 246.96 1344.96L16.56,1344.96A14.4 14.4 0 0 0 2.16 1359.36L2.16,1409.76A14.4 14.4 0 0 0 16.56 1424.16Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="131.76" y="1374.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">FramePublisher</text>
+<text x="131.76" y="1394.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Source 0</text>
+<path d="M304.56,1384.56L261.36,1384.56"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M1398.96,1424.16L1629.36,1424.16A14.4 14.4 0 0 0 1643.76 1409.76L1643.76,1359.36A14.4 14.4 0 0 0 1629.36 1344.96L1398.96,1344.96A14.4 14.4 0 0 0 1384.56 1359.36L1384.56,1409.76A14.4 14.4 0 0 0 1398.96 1424.16Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="1514.16" y="1374.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">FramePublisher</text>
+<text x="1514.16" y="1394.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Source 1</text>
+<path d="M1341.36,1384.56L1384.56,1384.56"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="448.56" y="1449.36" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" dominant-baseline="central">Frame publishing</text>
+<text x="448.56" y="1474.56" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">(always on)</text>
+<text x="1197.36" y="1449.36" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" dominant-baseline="central">Frame publishing</text>
+<text x="1197.36" y="1474.56" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">(always on)</text>
+<path d="M585.36,1154.16L786.96,1154.16A14.4 14.4 0 0 0 801.36 1139.76L801.36,1096.56A14.4 14.4 0 0 0 786.96 1082.16L585.36,1082.16A14.4 14.4 0 0 0 570.96 1096.56L570.96,1139.76A14.4 14.4 0 0 0 585.36 1154.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="686.16" y="1108.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">queue</text>
+<text x="686.16" y="1128.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Tiler input</text>
+<path d="M858.96,1154.16L1060.56,1154.16A14.4 14.4 0 0 0 1074.96 1139.76L1074.96,1096.56A14.4 14.4 0 0 0 1060.56 1082.16L858.96,1082.16A14.4 14.4 0 0 0 844.56 1096.56L844.56,1139.76A14.4 14.4 0 0 0 858.96 1154.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="959.76" y="1108.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">queue</text>
+<text x="959.76" y="1128.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Tiler input</text>
+<polygon points="686.16,1082.16 681.84,1070.64 690.48,1070.64" style="fill:rgb(0,0,0)"/>
+<path d="M448.56,1017.36L448.56,1035.36L686.16,1035.36L686.16,1076.4"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="959.76,1082.16 955.44,1070.64 964.08,1070.64" style="fill:rgb(0,0,0)"/>
+<path d="M1197.36,1017.36L1197.36,1035.36L959.76,1035.36L959.76,1076.4"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<path d="M693.36,1269.36L952.56,1269.36A14.4 14.4 0 0 0 966.96 1254.96L966.96,1211.76A14.4 14.4 0 0 0 952.56 1197.36L693.36,1197.36A14.4 14.4 0 0 0 678.96 1211.76L678.96,1254.96A14.4 14.4 0 0 0 693.36 1269.36Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1223.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvstreammux</text>
+<text x="822.96" y="1243.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Re-batch frames</text>
+<polygon points="750.96,1197.36 746.64,1185.84 755.28,1185.84" style="fill:rgb(0,0,0)"/>
+<path d="M686.16,1154.16L686.16,1168.56L750.96,1168.56L750.96,1191.6"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="894.96,1197.36 890.64,1185.84 899.28,1185.84" style="fill:rgb(0,0,0)"/>
+<path d="M959.76,1154.16L959.76,1168.56L894.96,1168.56L894.96,1191.6"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<path d="M693.36,1370.16L952.56,1370.16A14.4 14.4 0 0 0 966.96 1355.76L966.96,1312.56A14.4 14.4 0 0 0 952.56 1298.16L693.36,1298.16A14.4 14.4 0 0 0 678.96 1312.56L678.96,1355.76A14.4 14.4 0 0 0 693.36 1370.16Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1324.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvmultistreamtiler</text>
+<text x="822.96" y="1344.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Tile compositor</text>
+<path d="M693.36,1470.96L952.56,1470.96A14.4 14.4 0 0 0 966.96 1456.56L966.96,1413.36A14.4 14.4 0 0 0 952.56 1398.96L693.36,1398.96A14.4 14.4 0 0 0 678.96 1413.36L678.96,1456.56A14.4 14.4 0 0 0 693.36 1470.96Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1424.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">queue</text>
+<text x="822.96" y="1445.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Encoder (leaky)</text>
+<path d="M693.36,1571.76L952.56,1571.76A14.4 14.4 0 0 0 966.96 1557.36L966.96,1514.16A14.4 14.4 0 0 0 952.56 1499.76L693.36,1499.76A14.4 14.4 0 0 0 678.96 1514.16L678.96,1557.36A14.4 14.4 0 0 0 693.36 1571.76Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1525.68" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">videorate</text>
+<text x="822.96" y="1545.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">FPS cap (15fps)</text>
+<path d="M693.36,1672.56L952.56,1672.56A14.4 14.4 0 0 0 966.96 1658.16L966.96,1614.96A14.4 14.4 0 0 0 952.56 1600.56L693.36,1600.56A14.4 14.4 0 0 0 678.96 1614.96L678.96,1658.16A14.4 14.4 0 0 0 693.36 1672.56Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1626.48" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">nvvidconv</text>
+<text x="822.96" y="1646.64" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">NVMM → CPU</text>
+<path d="M693.36,1773.36L952.56,1773.36A14.4 14.4 0 0 0 966.96 1758.96L966.96,1715.76A14.4 14.4 0 0 0 952.56 1701.36L693.36,1701.36A14.4 14.4 0 0 0 678.96 1715.76L678.96,1758.96A14.4 14.4 0 0 0 693.36 1773.36Z"  style="fill:rgb(255,160,122);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1727.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">x264enc</text>
+<text x="822.96" y="1747.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">H.264 encoder</text>
+<path d="M693.36,1874.16L952.56,1874.16A14.4 14.4 0 0 0 966.96 1859.76L966.96,1816.56A14.4 14.4 0 0 0 952.56 1802.16L693.36,1802.16A14.4 14.4 0 0 0 678.96 1816.56L678.96,1859.76A14.4 14.4 0 0 0 693.36 1874.16Z"  style="fill:rgb(255,160,122);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1828.08" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">h264parse</text>
+<text x="822.96" y="1848.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">H.264 parser</text>
+<path d="M693.36,1974.96L952.56,1974.96A14.4 14.4 0 0 0 966.96 1960.56L966.96,1917.36A14.4 14.4 0 0 0 952.56 1902.96L693.36,1902.96A14.4 14.4 0 0 0 678.96 1917.36L678.96,1960.56A14.4 14.4 0 0 0 693.36 1974.96Z"  style="fill:rgb(255,160,122);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="1928.88" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">qtmux</text>
+<text x="822.96" y="1949.04" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">MP4 mux</text>
+<path d="M693.36,2075.76L952.56,2075.76A14.4 14.4 0 0 0 966.96 2061.36L966.96,2018.16A14.4 14.4 0 0 0 952.56 2003.76L693.36,2003.76A14.4 14.4 0 0 0 678.96 2018.16L678.96,2061.36A14.4 14.4 0 0 0 693.36 2075.76Z"  style="fill:rgb(255,160,122);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="2029.68" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">filesink</text>
+<text x="822.96" y="2049.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Write to disk</text>
+<polygon points="822.96,1298.16 818.64,1286.64 827.28,1286.64" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1269.36L822.96,1292.4"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,1398.96 818.64,1387.44 827.28,1387.44" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1370.16L822.96,1393.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,1499.76 818.64,1488.24 827.28,1488.24" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1470.96L822.96,1494"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,1600.56 818.64,1589.04 827.28,1589.04" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1571.76L822.96,1594.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,1701.36 818.64,1689.84 827.28,1689.84" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1672.56L822.96,1695.6"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,1802.16 818.64,1790.64 827.28,1790.64" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1773.36L822.96,1796.4"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,1902.96 818.64,1891.44 827.28,1891.44" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1874.16L822.96,1897.2"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="822.96,2003.76 818.64,1992.24 827.28,1992.24" style="fill:rgb(0,0,0)"/>
+<path d="M822.96,1974.96L822.96,1998"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="822.96" y="2097.36" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">/tmp/out.mp4</text>
+<text x="822.96" y="866.16" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" dominant-baseline="central">Encode / file output</text>
+<text x="822.96" y="894.96" text-anchor="middle" font-style="italic" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">(--record only)</text>
+<text x="318.96" y="1499.76" text-anchor="start" font-style="italic" fill="rgb(0,0,0)" dominant-baseline="central">Legend</text>
+<path d="M324.051,1558.13L360.051,1558.13A7.2 7.2 0 0 0 367.251 1550.93L367.251,1533.65A7.2 7.2 0 0 0 360.051 1526.45L324.051,1526.45A7.2 7.2 0 0 0 316.851 1533.65L316.851,1550.93A7.2 7.2 0 0 0 324.051 1558.13Z"  style="fill:rgb(173,216,230);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1542.29" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Data flow</text>
+<path d="M324.051,1604.31L360.051,1604.31A7.2 7.2 0 0 0 367.251 1597.11L367.251,1579.83A7.2 7.2 0 0 0 360.051 1572.63L324.051,1572.63A7.2 7.2 0 0 0 316.851 1579.83L316.851,1597.11A7.2 7.2 0 0 0 324.051 1604.31Z"  style="fill:rgb(216,191,216);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1588.47" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Inference</text>
+<path d="M324.051,1650.5L360.051,1650.5A7.2 7.2 0 0 0 367.251 1643.3L367.251,1626.02A7.2 7.2 0 0 0 360.051 1618.82L324.051,1618.82A7.2 7.2 0 0 0 316.851 1626.02L316.851,1643.3A7.2 7.2 0 0 0 324.051 1650.5Z"  style="fill:rgb(240,230,140);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1634.66" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Visualization</text>
+<path d="M324.051,1696.68L360.051,1696.68A7.2 7.2 0 0 0 367.251 1689.48L367.251,1672.2A7.2 7.2 0 0 0 360.051 1665L324.051,1665A7.2 7.2 0 0 0 316.851 1672.2L316.851,1689.48A7.2 7.2 0 0 0 324.051 1696.68Z"  style="fill:rgb(211,211,211);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1680.84" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Format conversion</text>
+<path d="M324.051,1742.86L360.051,1742.86A7.2 7.2 0 0 0 367.251 1735.66L367.251,1718.38A7.2 7.2 0 0 0 360.051 1711.18L324.051,1711.18A7.2 7.2 0 0 0 316.851 1718.38L316.851,1735.66A7.2 7.2 0 0 0 324.051 1742.86Z"  style="fill:rgb(255,160,122);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1727.02" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Encoding</text>
+<path d="M324.051,1789.04L360.051,1789.04A7.2 7.2 0 0 0 367.251 1781.84L367.251,1764.56A7.2 7.2 0 0 0 360.051 1757.36L324.051,1757.36A7.2 7.2 0 0 0 316.851 1764.56L316.851,1781.84A7.2 7.2 0 0 0 324.051 1789.04Z"  style="fill:rgb(255,255,224);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1773.2" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Application code</text>
+<path d="M324.051,1835.23L360.051,1835.23A7.2 7.2 0 0 0 367.251 1828.03L367.251,1810.75A7.2 7.2 0 0 0 360.051 1803.55L324.051,1803.55A7.2 7.2 0 0 0 316.851 1810.75L316.851,1828.03A7.2 7.2 0 0 0 324.051 1835.23Z"  style="fill:rgb(175,238,238);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="388.851" y="1819.39" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">Diagnostics</text>
+<path d="M324.051,1881.41L360.051,1881.41A7.2 7.2 0 0 0 367.251 1874.21L367.251,1856.93A7.2 7.2 0 0 0 360.051 1849.73L324.051,1849.73A7.2 7.2 0 0 0 316.851 1856.93L316.851,1874.21A7.2 7.2 0 0 0 324.051 1881.41Z"  style="fill:rgb(255,255,255);stroke-width:2.16;stroke:rgb(0,0,0);stroke-dasharray:7.2,7.2;" />
+<text x="388.851" y="1865.57" text-anchor="start" fill="rgb(0,0,0)" font-size="80%" dominant-baseline="central">only built with --debug-crops</text>
+</svg>

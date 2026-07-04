@@ -1,0 +1,104 @@
+---
+title: "PPE compliance monitoring with DeepStream"
+description: "Re-implementation of a multi-camera PPE compliance system on NVIDIA DeepStream, using a single GStreamer pipeline, zero-copy GPU buffers, and native multi-stream batching."
+pubDate: "Jul 02 2026"
+heroImage: "./media/hero_image.jpg"
+tags: ["Python", "C++", "Computer Vision", "Object Detection", "Edge AI", "Nvidia Jetson", "DeepStream", "GStreamer", "TensorRT", "YOLO", "Docker"]
+
+---
+
+import pipelineDiagram from './media/pipeline.svg';
+
+A complete rewrite of the earlier PPE compliance monitoring system on top of NVIDIA DeepStream. The custom per-camera multiprocessing architecture is replaced from scratch by a single GStreamer pipeline that batches streams natively, keeps buffers on the GPU end-to-end, and scales to more concurrent cameras on the same Jetson Orin device.
+
+- *Original project: [PPE compliance monitoring](/projects/ppe-compliance-monitoring)*
+
+| Area | Technology |
+| --- | --- |
+| Hardware | NVIDIA Jetson Orin Nano Super |
+| Languages | Python (orchestration), C++ (native OSD probe) |
+| Pipeline | NVIDIA DeepStream 7.1, GStreamer, Service Maker Pipeline API |
+| Packaging | Docker, [jetson-containers](https://github.com/dusty-nv/jetson-containers) |
+| Inference | TensorRT (FP16), YOLO26 (PGIE + SGIE), `nvinfer` |
+| Tracking | `nvtracker` with NvDCF |
+| Messaging | Zenoh (SHM pub/sub of JPEG snapshots, per-camera keys) |
+| Storage & telemetry | AWS S3 (media storage), Fluent Bit (telemetry) |
+
+*Stack at a glance: the hardware, pipeline, and services that make up the system.*
+
+## Overview
+
+The original PPE compliance system ran one Python process tree per RTSP camera. It worked, but every subprocess that touched CUDA created its own context, memory overhead grew linearly with camera count, and frames were copied between CPU and GPU multiple times along the pipeline. The obvious ceiling was how many concurrent streams a single Jetson Orin could carry.
+
+DeepStream is NVIDIA's framework for exactly this kind of problem: a single GStreamer process that batches multiple streams into one buffer, runs TensorRT inference on the batch, tracks objects across frames, and keeps data in NVMM (NVIDIA GPU) memory between stages.
+
+## Approach
+
+The pipeline is written in Python using DeepStream 7.1's Service Maker Pipeline API. All RTSP/file sources feed a single `nvstreammux` that produces a batched buffer, which flows through a two-stage inference chain (person detector → PPE classifier), a multi-object tracker, and per-source OSD branches that render annotations and publish annotated JPEGs over Zenoh to a subscriber. The subscriber uploads snapshots to S3 with custom retry logic that saves frames to local disk when the network is down, then hands the URL and event data to FluentBit, which sends them to the cloud with its own buffering and retries.
+
+<a href={pipelineDiagram.src ?? pipelineDiagram} target="_blank" rel="noopener">
+  <img src={pipelineDiagram.src ?? pipelineDiagram} alt="Pipeline diagram" />
+  <em style="display: block; text-align: center; font-size: 0.875rem; opacity: 0.7;">Diagram example for two sources.<br />Click to open in a new tab</em>
+</a>
+
+### Two-stage inference: PGIE + SGIE
+
+The primary GPU inference engine (PGIE) runs a YOLO26 model to detect persons and other COCO classes on the batched buffer. The secondary GIE (SGIE) runs a YOLO26-based PPE model on the per-person crops produced by the PGIE. DeepStream handles the crop extraction, transforms SGIE detection coordinates back to full-frame space, and attaches everything as metadata on the same frame, so the PPE probe just reads which labels appeared inside each person's bounding box.
+
+To keep inference throughput high without duplicating detections, PGIE runs on every other frame (`interval=1`) and the tracker fills the gaps by propagating IDs and bounding boxes on the frames without inference. The tracker is `nvtracker` configured with the NvDCF perf profile: correlation-filter tracking gives more robust short-term association than plain IoU when people occlude each other. For simplicity, no ReID model is used, so unlike DeepSORT the tracker relies only on motion and correlation cues rather than appearance embeddings.
+
+### TensorRT engine export
+
+Both models run as TensorRT FP16 engines, converted from PyTorch to ONNX and then compiled by `nvinfer` on the first pipeline run. Ultralytics' `yolo export` CLI produces ONNX files that DeepStream's bbox parser can't consume directly, so the models were exported with the `export_yolo26.py` script from [DeepStream-Yolo](https://github.com/marcoslucianops/DeepStream-Yolo) instead, which:
+
+- patches the `Detect` head to use only YOLO26's one2one branch instead of the parallel one2many branch, so the ONNX graph outputs one box per object and no NMS step is needed,
+- switches `dist2bbox` to output `xyxy`, which DeepStream's custom bbox parser expects,
+- appends a `DeepStreamOutput` module that reshapes detections into the `[x1, y1, x2, y2, score, label]` per-detection layout the parser expects,
+- swaps `C2f` to `forward_split` so the ONNX graph uses `Split` ops instead of `Chunk`.
+
+### Per-camera OSD and multi-camera tiling
+
+`nvdsosd` cannot annotate a batched multi-surface buffer directly; it collapses every source's metadata onto one surface. The pipeline demuxes the batch with `nvstreamdemux` after inference, runs one OSD instance per source to draw that source's boxes onto its own surface, and then either publishes annotated frames per-camera over Zenoh or re-batches them through a second `nvstreammux` for tiled MP4 recording.
+
+### Encoder decoupling with a leaky queue
+
+The Jetson Orin Nano Super has no NVENC hardware block, so encoding falls back to the `x264enc` software encoder, which topped out around ~50 FPS on this hardware. A naive Python pipeline copying `deepstream-app`'s structure ran the whole graph at that speed. The reason turned out to be architectural: `deepstream-app` wraps each stage in a bin with a `queue` at its entrance, so a slow encoder only stalls the queue in front of it while inference keeps running at full speed. Replicating that pattern, plus a `leaky=2, max-size-buffers=1` queue immediately before the encoder, decoupled the encoder completely. Inference now reaches ~100–105 FPS to match `deepstream-app`, while the encoder drops frames it can't keep up with.
+
+### Containerized build with jetson-containers
+
+The whole runtime ships as a Docker image built in two layers. The base image is produced by NVIDIA's [jetson-containers](https://github.com/dusty-nv/jetson-containers) toolchain, which resolves the right CUDA, cuDNN, TensorRT, and DeepStream versions for the L4T release on the device (`r36.5.tegra-aarch64-cu126-22.04`, DeepStream 7.1). A project Dockerfile is then layered on top to add GStreamer plugins, Python dependencies (Ultralytics, `pyservicemaker`, `boto3`, `eclipse-zenoh` with shared-memory support), and the C++ build deps for the native probe. The container runs with the `nvidia` runtime and mounts host directories for media, cached TensorRT engines, and the app source.
+
+### Native C++ probe for OSD text suppression
+
+`nvinfer`'s default per-object OSD caption caused problems: the `text_params.display_text` field crashes the process when touched through the Python `pyservicemaker` binding, and disabling `display-text` on `nvosdbin` gates the whole text-draw call, silencing the custom PPE violation captions too. A small native C++ Service Maker probe (`suppress_default_text`) blanks the default caption in-place and attaches to the SGIE from Python, with no GStreamer plugin registration needed.
+
+## Results
+
+- Single-process pipeline handles multiple concurrent RTSP/file sources on a Jetson Orin Nano Super with a single CUDA context shared across all streams.
+- Inference throughput at ~100–105 FPS on the primary detector, matching NVIDIA's own `deepstream-app` reference on the same hardware.
+- Per-camera OSD annotation and per-camera Zenoh publishing preserve source identity end-to-end even though inference runs on a batched buffer.
+- Optional tiled MP4 recording branch composites all sources into one canvas for review.
+
+## Challenges & Learnings
+
+**Flow API vs Pipeline API.** DeepStream's higher-level Flow API's `encode()` method hardcodes `nvv4l2h264enc` (NVIDIA's hardware encoder). The Jetson Orin Nano Super doesn't have NVENC, so `encode()` fails at pipeline construction. The lower-level Pipeline API was the only option for file output on this device.
+
+**OSD only works on demuxed buffers.** `nvdsosd` looked like a drop-in for drawing annotations, but on a batched multi-surface buffer it collapses everything onto one surface. The workaround (demux, OSD-per-source, optionally re-batch for tiling) added elements but kept per-camera identity intact through the whole graph.
+
+**Where FPS gets measured matters.** The FPS reported by `deepstream-app` is probed upstream of the encoder, so it reflects inference throughput and not the end-to-end rate. Recreating the same queue-per-stage structure was what actually delivered the speedup, not any Python-vs-C difference.
+
+**Some things need C++.** Service Makers's Python bindings for `text_params` crash on read/write, but the native Service Maker API doesn't have that limitation. A small C++ probe was enough to work around it, and the rest of the pipeline stays in Python.
+
+## Conclusion
+
+DeepStream delivered the architectural improvements that the original per-process design pointed to: a single CUDA context, native multi-stream batching, GPU-resident buffers, and a hardware-accelerated tracker, while keeping the same PPE compliance logic. The main cost was learning where DeepStream's abstractions leak and where a native probe is the right tool.
+
+## References
+
+[1] NVIDIA, *DeepStream SDK 7.1 Documentation*. https://docs.nvidia.com/metropolis/deepstream/7.1/dev-guide/
+
+[2] Marcos Luciano, *DeepStream-Yolo*. https://github.com/marcoslucianops/DeepStream-Yolo
+
+[3] NVIDIA, *PhysicalAI-SmartSpaces — MTMC_Tracking_2026* (video sources used for testing, released as part of the AI City Challenge 2026 Track 1). https://huggingface.co/datasets/nvidia/PhysicalAI-SmartSpaces/tree/main/MTMC_Tracking_2026/
+
+[4] *AI City Challenge 2026 — Track 1: Multi-Camera 3D Perception*. https://www.aicitychallenge.org/2026-track1/
