@@ -3,7 +3,7 @@ title: "PPE compliance monitoring"
 description: "Real-time PPE compliance monitoring system deployed on Nvidia Jetson Orin edge devices across multiple cameras"
 pubDate: "Jun 30 2026"
 heroImage: "./media/hero_image.jpg"
-tags: ["Python", "Computer Vision", "Object Detection", "Edge AI", "Nvidia Jetson", "Deep Learning", "PPE Detection", "TensorRT", "Docker"]
+tags: ["Python", "Computer Vision", "Object Detection", "Edge AI", "Nvidia Jetson", "Deep Learning", "PPE Detection", "TensorRT", "YOLO", "Docker"]
 
 ---
 
