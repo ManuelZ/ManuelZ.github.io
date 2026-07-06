@@ -3,7 +3,7 @@ title: "PPE compliance monitoring"
 description: "Real-time PPE compliance monitoring system deployed on Nvidia Jetson Orin edge devices across multiple cameras"
 pubDate: "Jun 30 2026"
 heroImage: "./media/hero_image.jpg"
-tags: ["Python", "Computer Vision", "Object Detection", "Edge AI", "Nvidia Jetson", "Deep Learning", "PPE Detection", "TensorRT", "YOLO", "Docker"]
+tags: ["Python", "Computer Vision", "Object Detection", "Keypoint Detection", "Pose Estimation", "Edge AI", "Nvidia Jetson", "Deep Learning", "PPE Detection", "TensorRT", "YOLO", "Docker"]
 
 ---
 
@@ -17,9 +17,13 @@ The system had to run entirely on-premises on embedded hardware, process multipl
 
 ## Approach
 
-I built a Python-based multiprocessing pipeline where each RTSP camera stream runs in its own process, performing object detection and rule evaluation independently. When a violation is detected, the pipeline saves an annotated image snapshot with bounding boxes and labels, buffers recent frames, writes a short video clip around the event, and logs the violation type, timestamp, and camera location for later analysis.
+I built a Python-based multiprocessing pipeline where each RTSP camera stream runs in its own process, performing keypoint detection, PPE detection, and keypoint-anchored rule evaluation independently. When a violation is detected, the pipeline saves an annotated image snapshot with bounding boxes and labels, buffers recent frames, writes a short video clip around the event, and logs the violation type, timestamp, and camera location for later analysis.
 
-### Detection Model
+### Person Keypoint Detection
+
+Rather than a plain person detector, a keypoint detection model was used to locate anatomical landmarks on each visible worker (head, wrists, elbows, and other joints). These points of interest anchored the PPE checks to the correct body region: a helmet detection was validated against head keypoints, gloves against wrists, and arm protectors against the wrist–elbow segment. This spatial validation reduced false positives from PPE items detected in the frame but not actually worn by a worker. Per-worker crops for the downstream PPE model were derived from the bounding box of each worker's detected keypoints.
+
+### PPE Detection Model
 
 A YOLO-based model was trained to detect the presence or absence of each required PPE item on every visible worker: security helmets, gloves, arm protectors, and particulate respirators. The model was evaluated per detection class using precision, recall, and F1 metrics to identify weak spots before deployment.
 
@@ -40,7 +44,7 @@ The entire pipeline (model, runtime dependencies, and configuration) was package
 
 ## Technical Considerations
 
-**GPU memory per process.** Each camera runs a tree of Python processes (ingestion → person detection → PPE detection → event processing), and every subprocess that uses CUDA allocates its own CUDA context. Reducing the number of independent contexts is a clear opportunity to lower memory overhead and increase the number of concurrent streams the hardware can support.
+**GPU memory per process.** Each camera runs a tree of Python processes (ingestion → keypoint detection → PPE detection → event processing), and every subprocess that uses CUDA allocates its own CUDA context. Reducing the number of independent contexts is a clear opportunity to lower memory overhead and increase the number of concurrent streams the hardware can support.
 
 **Dynamic batching for PPE inference.** The PPE model receives per-person crops rather than full frames, and the crop count per frame varies with how many workers are visible. Crops are collected per frame, chunked into fixed-size batches, and sent as a single inference call to keep the GPU utilized.
 
