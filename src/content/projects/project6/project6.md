@@ -1,13 +1,13 @@
 ---
 title: "PPE compliance monitoring"
-description: "Real-time PPE compliance monitoring system deployed on Nvidia Jetson Orin edge devices across multiple cameras"
+description: "Live PPE compliance monitoring system deployed on Nvidia Jetson Orin edge devices across multiple cameras"
 pubDate: "Jun 30 2026"
 heroImage: "./media/hero_image.jpg"
 tags: ["Python", "Computer Vision", "Object Detection", "Keypoint Detection", "Pose Estimation", "Edge AI", "Nvidia Jetson", "Deep Learning", "PPE Detection", "TensorRT", "YOLO", "Docker"]
 
 ---
 
-A real-time computer vision system that monitors worker PPE compliance across multiple camera feeds, deployed on Nvidia Jetson Orin embedded computers using TensorRT-accelerated inference.
+A live computer vision system that monitors worker PPE compliance across multiple camera feeds, deployed on Nvidia Jetson Orin embedded computers using TensorRT-accelerated inference.
 
 ## Overview
 
