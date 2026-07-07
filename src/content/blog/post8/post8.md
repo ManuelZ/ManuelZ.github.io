@@ -2,7 +2,7 @@
 title: "Training DeepLabV3 with Automatic Mixed Precision"
 description: "How Automatic Mixed Precision reduced memory consumption and enabled training DeepLabV3 for semantic segmentation on a 16GB GPU."
 pubDate: "Jul 06 2026"
-heroImage: "./images/hero_image.png"
+heroImage: "./media/hero_image.png"
 tags: ["PyTorch", "AMP", "Deep Learning", "Semantic Segmentation"]
 ---
 
@@ -79,6 +79,9 @@ print("{:.0f} MiB allocated".format(torch.cuda.memory_allocated() / 1024**2))
 | After loss calculation | 13882 |
 | Before backward pass | 14051 |
 
+- Iteration speed: **3.38 s/it**
+- Epoch length: **59:10**
+
 The second epoch crashed with:
 
 ```
@@ -88,12 +91,11 @@ in use. Of the allocated memory 13.55 GiB is allocated by PyTorch, and
 1.82 GiB is reserved by PyTorch but unallocated.
 ```
 
-- Iteration speed: **3.38 s/it**
-- Epoch length: **59:10**
+
 
 ## Experiments on a P100 (no Tensor Cores)
 
-Tensor Cores are required to obtain a boost in speed, so the same experiment was run on a P100 (Pascal architecture, no Tensor Cores). To avoid an OOM when running without AMP, the images were first rescaled to 576x1024 (HxW).
+Tensor Cores are required to obtain a boost in speed, so the same experiment ran on a P100 (Pascal architecture, no Tensor Cores). To avoid an OOM when running without AMP, the images were first rescaled to 576x1024 (HxW).
 
 ### Experiment 3: without AMP
 
