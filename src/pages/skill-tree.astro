@@ -1,0 +1,651 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import { SITE_TITLE } from "../config";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Skill Tree | ${SITE_TITLE}`} description="Interactive CV project skill tree" />
+    <style is:global>
+      /* Global because the script injects SVG elements (edges, nodes, hub) via
+         document.createElementNS — those never receive Astro's scoping attribute,
+         so scoped selectors like .edge / .hub-core would silently stop applying. */
+      :root{
+        --bg: #0e1218;
+        --panel: #141a22;
+        --panel-border: #232b36;
+        --line-idle: #2b3542;
+        --line-active: #57e0d1;
+        --text-main: #dfe6ee;
+        --text-dim: #7c8a9a;
+        --amber: #f0a63d;
+        --coral: #ef6f6f;
+        --violet: #a586e8;
+        --teal: #4fc9c9;
+        --lime: #92c65e;
+      }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background:
+          radial-gradient(ellipse at 50% 0%, #161d27 0%, var(--bg) 55%),
+          repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 40px),
+          repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 40px);
+        background-color: var(--bg);
+      }
+      svg#grid { width: 100%; max-width: 1150px; height: auto; display: block; }
+
+      /* SVG-only classes emitted from JS innerHTML — utilities don't cover stroke/fill on SVG */
+      .edge { stroke: var(--line-idle); stroke-width: 2; fill: none; }
+      .edge.active { stroke: var(--line-active); filter: drop-shadow(0 0 3px rgba(87,224,209,0.6)); }
+      .node { cursor: pointer; }
+      .node.locked { cursor: not-allowed; }
+      .node-glyph { font-family: 'JetBrains Mono', monospace; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; user-select: none; }
+      .node-label { font-family: 'Inter', sans-serif; font-size: 11px; text-anchor: middle; fill: var(--text-dim); pointer-events: none; user-select: none; }
+      .node.locked .node-label { fill: #3d4956; }
+      .hub-core { fill: #1c232d; stroke: #4a5a68; stroke-width: 2; }
+      .hub-glyph { font-family: 'JetBrains Mono', monospace; font-weight: 700; fill: #dfe6ee; text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </head>
+  <body class="box-border min-h-screen flex flex-col overflow-x-hidden font-inter text-st-text-main">
+
+    <div
+      class="flex items-center gap-4 px-[22px] py-3 min-h-[20px] border-b border-st-panel-border font-jetbrains text-[13px] text-st-text-dim"
+      style="background: linear-gradient(180deg, #1a212b 0%, #141920 100%);"
+    >
+      <span class="text-st-line-active font-bold">▸</span>
+      <span class="flex-1" id="topbar-text">Hover a node to inspect it.</span>
+      <a href="/" class="text-st-text-dim no-underline text-[12px] hover:text-st-line-active">← Back to portfolio</a>
+      <div class="flex gap-[2px] bg-[#1c232d] border border-st-panel-border rounded-[7px] p-[2px]">
+        <button id="mode-play" class="border-0 bg-st-line-active text-[#0b1015] font-bold font-jetbrains text-[11.5px] px-3 py-[6px] rounded-[5px] cursor-pointer tracking-[0.03em]">Play</button>
+        <button id="mode-build" class="border-0 bg-transparent text-st-text-dim font-jetbrains text-[11.5px] px-3 py-[6px] rounded-[5px] cursor-pointer tracking-[0.03em]">Build</button>
+      </div>
+    </div>
+
+    <div class="flex flex-1 min-h-0">
+      <div id="sidebar-play" class="w-[250px] shrink-0 border-r border-st-panel-border px-[18px] py-5 flex flex-col gap-4 overflow-y-auto">
+        <div class="bg-st-panel border border-st-panel-border rounded-lg p-[14px]">
+          <div class="font-jetbrains text-[15px] font-bold mb-1">Manuel Z.</div>
+          <div class="text-[11px] text-st-amber font-jetbrains" id="lv-text">S.LV 0</div>
+          <div class="mt-[10px] h-[5px] bg-[#232b36] rounded-[3px] overflow-hidden">
+            <div class="h-full transition-[width] duration-[400ms] ease-out" id="bar-fill" style="width:0%; background: linear-gradient(90deg, var(--teal), var(--line-active));"></div>
+          </div>
+          <div class="mt-[6px] text-[11px] text-st-text-dim" id="count-text">0 / 0 nodes cleared</div>
+        </div>
+
+        <div class="flex flex-col gap-2 text-[12px]">
+          <div class="font-jetbrains text-[10.5px] uppercase tracking-[0.08em] text-st-text-dim mb-[2px]">Domains</div>
+          <div id="domain-legend" class="flex flex-col gap-2"></div>
+        </div>
+
+        <div class="flex flex-col gap-2 text-[12px]">
+          <div class="font-jetbrains text-[10.5px] uppercase tracking-[0.08em] text-st-text-dim mb-[2px]">Node states</div>
+          <div class="flex items-center gap-2 text-st-text-dim"><span class="w-[9px] h-[9px] rounded-full shrink-0 bg-[#3d4956]"></span>Locked</div>
+          <div class="flex items-center gap-2 text-st-text-dim"><span class="w-[9px] h-[9px] rounded-full shrink-0 bg-[#232b36] border border-[#4a5a68]"></span>Open</div>
+          <div class="flex items-center gap-2 text-st-text-dim"><span class="w-[9px] h-[9px] rounded-full shrink-0 bg-st-line-active"></span>In progress</div>
+          <div class="flex items-center gap-2 text-st-text-dim"><span class="w-[9px] h-[9px] rounded-full shrink-0 bg-st-amber"></span>Cleared</div>
+        </div>
+
+        <button class="mt-auto font-jetbrains text-[11px] px-[10px] py-2 rounded-md border border-st-panel-border bg-transparent text-st-text-dim cursor-pointer text-left hover:border-[#3d4956] hover:text-st-text-main" id="reset-btn">↺ Reset progress</button>
+      </div>
+
+      <div id="sidebar-build" class="hidden w-[250px] shrink-0 border-r border-st-panel-border px-[18px] py-5 flex-col gap-4 overflow-y-auto">
+        <div class="bg-st-panel border border-st-panel-border rounded-lg p-[14px] flex flex-col gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <label class="text-[12px] text-st-text-dim">Levels per spoke</label>
+            <div class="flex items-center gap-[6px]">
+              <button id="level-minus" class="w-6 h-6 rounded-[5px] border border-st-panel-border bg-[#1c232d] text-st-text-main cursor-pointer text-[13px] leading-none hover:border-[#3d4956]">−</button>
+              <span id="level-count" class="font-jetbrains text-[13px] w-[18px] text-center">3</span>
+              <button id="level-plus" class="w-6 h-6 rounded-[5px] border border-st-panel-border bg-[#1c232d] text-st-text-main cursor-pointer text-[13px] leading-none hover:border-[#3d4956]">+</button>
+            </div>
+          </div>
+          <div class="text-[11.5px] text-st-text-dim leading-[1.5]">
+            Click any node on the grid to edit its projects and its edges. Reducing levels just hides the outer tiers — nothing is deleted.
+          </div>
+        </div>
+        <button class="font-jetbrains text-[11px] px-[10px] py-2 rounded-md border border-st-panel-border bg-transparent text-st-text-dim cursor-pointer text-left hover:border-[#3d4956] hover:text-st-text-main" id="json-btn">{ } Edit raw config JSON</button>
+        <button class="mt-auto font-jetbrains text-[11px] px-[10px] py-2 rounded-md border border-st-panel-border bg-transparent text-st-text-dim cursor-pointer text-left hover:border-[#3d4956] hover:text-st-text-main" id="reset-btn-2">↺ Reset progress</button>
+      </div>
+
+      <div class="flex-1 relative overflow-auto flex items-center justify-center">
+        <svg id="grid" viewBox="0 0 1000 720"></svg>
+      </div>
+    </div>
+
+    <div
+      id="tooltip"
+      class="fixed pointer-events-none rounded-[7px] px-3 py-[9px] text-[12px] text-st-text-main max-w-[230px] opacity-0 z-50 border border-[#2f3947] shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition-opacity duration-100"
+      style="background:#1a212b;"
+    ></div>
+
+    <div id="modal-overlay" class="fixed inset-0 hidden items-center justify-center z-[100] bg-[rgba(8,10,14,0.7)]">
+      <div id="modal-body" class="w-[460px] max-w-[92vw] max-h-[86vh] overflow-y-auto rounded-[12px] p-[22px] bg-st-panel border border-st-panel-border"></div>
+    </div>
+    <div id="json-overlay" class="fixed inset-0 hidden items-center justify-center z-[100] bg-[rgba(8,10,14,0.7)]">
+      <div id="json-modal-body" class="w-[460px] max-w-[92vw] max-h-[86vh] overflow-y-auto rounded-[12px] p-[22px] bg-st-panel border border-st-panel-border"></div>
+    </div>
+
+    <script is:inline>
+      const DEFAULT_DOMAINS = {
+        geometry: { label: "3D Vision & Geometry", hex:"#f0a63d", glyph:"G", angle:-90 },
+        detect:   { label: "Detection & Tracking", hex:"#ef6f6f", glyph:"D", angle:-18 },
+        edge:     { label: "Edge Deployment", hex:"#a586e8", glyph:"E", angle:54 },
+        video:    { label: "Video Pipelines", hex:"#4fc9c9", glyph:"V", angle:126 },
+        applied:  { label: "Applied & Industrial", hex:"#92c65e", glyph:"A", angle:198 },
+      };
+      const domainKeys = () => Object.keys(CONFIG.domains);
+      const MIN_LEVELS = 1, MAX_LEVELS = 6;
+      const CENTER = { x: 500, y: 360 };
+      const INNER_R = 110, OUTER_R = 340;
+
+      function radiusForTier(tier, levels){
+        if (levels <= 1) return (INNER_R + OUTER_R) / 2;
+        return INNER_R + (OUTER_R - INNER_R) * (tier - 1) / (levels - 1);
+      }
+      function polar(cx, cy, r, angleDeg){
+        const a = angleDeg * Math.PI / 180;
+        return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+      }
+
+      const SEED_OPTIONS = {
+        geometry: [
+          [ {title:"Camera Calibration Toolkit", desc:"Intrinsic/extrinsic calibration from a checkerboard set with reprojection-error reporting.", tags:["OpenCV","Math"]},
+            {title:"Homography Panorama Stitcher", desc:"Feature-match and warp overlapping photos into one panorama.", tags:["SIFT/ORB","RANSAC"]} ],
+          [ {title:"Monocular Visual Odometry (KITTI)", desc:"Essential matrix + RANSAC + pose chaining over a driving sequence, with a trajectory viewer.", tags:["Epipolar","SE(3)"]},
+            {title:"Bird's-eye View from Stereo", desc:"Stereo depth to top-down projection for a driving scene.", tags:["Stereo","BEV"]} ],
+          [ {title:"Visual SLAM with Loop Closure", desc:"Front-end tracking plus pose-graph optimization and loop closure detection.", tags:["SLAM","Bundle Adj."]},
+            {title:"Multi-Camera Extrinsic Auto-Calibration", desc:"Recover relative poses between an unsynced multi-camera rig automatically.", tags:["Multi-view"]} ],
+        ],
+        detect: [
+          [ {title:"Custom YOLO Fine-tune", desc:"Fine-tune a YOLO model on a small custom dataset end to end.", tags:["YOLO","Fine-tune"]},
+            {title:"SAM2-assisted Segmentation Dataset", desc:"Use SAM2 to bootstrap masks for a custom segmentation task.", tags:["SAM2","Segmentation"]} ],
+          [ {title:"ByteTrack Multi-Object Tracker", desc:"Detection-based tracker with HOTA/MOTA/IDF1 evaluation via TrackEval.", tags:["ByteTrack","TrackEval"]},
+            {title:"Deep Metric Learning Re-ID", desc:"Metric-learning embeddings to re-identify objects across camera cuts.", tags:["Metric Learning","FAISS"]} ],
+          [ {title:"Multi-Camera Handoff Tracking", desc:"Hand a tracked ID off between overlapping camera views without ID switches.", tags:["Multi-cam"]},
+            {title:"Anomalib Defect Detector", desc:"Train an unsupervised anomaly model for industrial defect spotting.", tags:["Anomalib","Anomaly"]} ],
+        ],
+        edge: [
+          [ {title:"ONNX Export & Benchmark", desc:"Export a trained model to ONNX and benchmark latency across runtimes.", tags:["ONNX"]},
+            {title:"Post-Training Quantization", desc:"Apply PTQ to a classifier and measure the accuracy/speed trade-off.", tags:["Quantization"]} ],
+          [ {title:"TensorRT Engine on Jetson Orin", desc:"Build an FP16 TensorRT engine and profile it on real Jetson hardware with Nsight.", tags:["TensorRT","Jetson"]},
+            {title:"INT8 Calibration Pipeline", desc:"Build a calibration dataset and produce an INT8 engine with acceptable accuracy loss.", tags:["INT8"]} ],
+          [ {title:"Multi-Stream DeepStream Pipeline", desc:"Ingest several RTSP streams through DeepStream with batched inference.", tags:["DeepStream","RTSP"]},
+            {title:"Serverless GPU Inference (RunPod)", desc:"Deploy a model as a serverless GPU endpoint with autoscaling.", tags:["RunPod","Serverless"]} ],
+        ],
+        video: [
+          [ {title:"RTSP Stream Viewer & Recorder", desc:"A small app that ingests an RTSP stream, displays it, and records clips on demand.", tags:["RTSP","GStreamer"]},
+            {title:"Frame-Diff Motion Trigger", desc:"Trigger recording or alerts from simple frame-differencing motion detection.", tags:["OpenCV"]} ],
+          [ {title:"Multi-Camera Sync Dashboard", desc:"A dashboard that tiles and time-syncs several camera feeds live.", tags:["Dashboard"]},
+            {title:"Live Annotation Overlay Tool", desc:"Overlay detection/tracking results onto a live feed in real time.", tags:["Overlay"]} ],
+          [ {title:"GStreamer Batch Processing Pipeline", desc:"Batched multi-stream GStreamer pipeline feeding a shared inference engine.", tags:["GStreamer","Batching"]},
+            {title:"Cloud Upload Sidecar w/ Buffering", desc:"Edge-to-cloud sidecar that queues and retries uploads under bad connectivity.", tags:["Edge-to-cloud"]} ],
+        ],
+        applied: [
+          [ {title:"PPE Detection Prototype", desc:"Detect hard hats / vests in a workplace video feed with a small labeled set.", tags:["Safety","YOLO"]},
+            {title:"Defect Spotter on Product Photos", desc:"Flag visibly defective units from a folder of product photos.", tags:["QC","Anomalib"]} ],
+          [ {title:"Conveyor Anomaly Classifier", desc:"Classify items on a moving conveyor feed into pass/fail categories.", tags:["Industrial"]},
+            {title:"Planogram Compliance Checker", desc:"Check shelf photos against an expected product layout.", tags:["Retail"]} ],
+          [ {title:"Full Compliance Monitoring System", desc:"Multi-camera, multi-class violation detection with alerting end to end.", tags:["Systems"]},
+            {title:"Robotics Perception in Webots", desc:"Perception stack for a simulated robot in Webots, integrated over ROS2.", tags:["ROS2","Webots"]} ],
+        ],
+      };
+
+      function makeOption(nodeId, seed, idx){
+        return { id: nodeId + '-opt' + idx + '-' + Math.random().toString(36).slice(2,7),
+          title: seed ? seed.title : 'New project', desc: seed ? seed.desc : 'Describe this challenge...', tags: seed ? seed.tags : [] };
+      }
+
+      function buildDefaultConfig(){
+        const domains = JSON.parse(JSON.stringify(DEFAULT_DOMAINS));
+        const keys = Object.keys(domains);
+        const cfg = { levels: 3, domains, nodeMeta: {}, edges: [] };
+        keys.forEach(dk => {
+          let prev = 'hub';
+          for (let t=1; t<=3; t++){
+            const id = dk + '-t' + t;
+            const seeds = (SEED_OPTIONS[dk] && SEED_OPTIONS[dk][t-1]) || [];
+            cfg.nodeMeta[id] = { domain: dk, tier: t, options: seeds.map((s,i)=>makeOption(id,s,i)) };
+            cfg.edges.push({ from: prev, to: id, type: 'prereq' });
+            prev = id;
+          }
+        });
+        for (let i=0;i<keys.length;i++){
+          const a = keys[i] + '-t2';
+          const b = keys[(i+1)%keys.length] + '-t2';
+          cfg.edges.push({ from:a, to:b, type:'link' });
+        }
+        return cfg;
+      }
+
+      let CONFIG = null;
+      let progress = {};
+      let mode = 'play';
+
+      const CLS = {
+        btn: "font-jetbrains text-[12px] px-[14px] py-2 rounded-[7px] border border-st-panel-border bg-transparent text-st-text-dim cursor-pointer hover:text-st-text-main hover:border-[#3d4956]",
+        btnPrimary: "font-jetbrains text-[12px] px-[14px] py-2 rounded-[7px] border border-st-line-active bg-st-line-active text-[#0b1015] font-bold cursor-pointer disabled:opacity-[0.35] disabled:cursor-not-allowed",
+        btnComplete: "font-jetbrains text-[12px] px-[14px] py-2 rounded-[7px] border border-st-amber bg-st-amber text-[#231605] font-bold cursor-pointer",
+        modalActions: "mt-[14px] flex gap-2 justify-end",
+        modalSub: "text-st-text-dim text-[12px] mb-4",
+        modalH2: "m-0 mb-[2px] font-jetbrains text-[16px]",
+        tag: "font-jetbrains text-[9.5px] px-[6px] py-[2px] rounded bg-[#20272f] text-st-text-dim uppercase",
+        sectionTitle: "font-jetbrains text-[11px] uppercase tracking-[0.06em] text-st-text-dim mt-4 mb-2",
+        checkList: "max-h-[150px] overflow-y-auto border border-st-panel-border rounded-lg px-[10px] py-2 flex flex-col gap-[6px]",
+        checkListLabel: "flex items-center gap-2 text-[12.5px] text-st-text-main cursor-pointer",
+        editOption: "border border-st-panel-border rounded-[9px] p-3 mb-[10px]",
+        editInput: "w-full bg-[#0e131a] border border-st-panel-border rounded-md text-st-text-main font-inter text-[12.5px] px-[9px] py-[7px] mt-[5px]",
+        editLabel: "text-[10.5px] text-st-text-dim uppercase tracking-[0.04em]",
+        textBtn: "font-jetbrains text-[11px] px-[10px] py-2 rounded-md border border-st-panel-border bg-transparent text-st-text-dim cursor-pointer text-left hover:border-[#3d4956] hover:text-st-text-main",
+        smallX: "bg-transparent border-0 text-st-text-dim cursor-pointer text-[15px] leading-none hover:text-st-coral",
+      };
+      const showOverlay = el => { el.classList.remove("hidden"); el.classList.add("flex"); };
+      const hideOverlay = el => { el.classList.add("hidden"); el.classList.remove("flex"); };
+
+      const storage = {
+        get(key){ try { const v = localStorage.getItem(key); return v ? { value: v } : null; } catch(e){ return null; } },
+        set(key, value){ try { localStorage.setItem(key, value); } catch(e){} },
+      };
+
+      function ensureNodeMeta(domain, tier){
+        const id = domain + '-t' + tier;
+        if (!CONFIG.nodeMeta[id]){
+          CONFIG.nodeMeta[id] = { domain, tier, options: [ makeOption(id, null, 0) ] };
+          const fromId = tier === 1 ? 'hub' : (domain + '-t' + (tier-1));
+          if (!CONFIG.edges.some(e => e.from===fromId && e.to===id)){
+            CONFIG.edges.push({ from: fromId, to: id, type:'prereq' });
+          }
+        }
+        return CONFIG.nodeMeta[id];
+      }
+
+      function visibleNodeIds(){
+        const ids = ['hub'];
+        domainKeys().forEach(dk => { for (let t=1;t<=CONFIG.levels;t++) ids.push(dk+'-t'+t); });
+        return ids;
+      }
+
+      function buildNodesForRender(){
+        const nodes = { hub: { id:'hub', isHub:true, x:CENTER.x, y:CENTER.y } };
+        domainKeys().forEach(dk => {
+          for (let t=1; t<=CONFIG.levels; t++){
+            const meta = ensureNodeMeta(dk, t);
+            const pos = polar(CENTER.x, CENTER.y, radiusForTier(t, CONFIG.levels), CONFIG.domains[dk].angle);
+            nodes[meta.domain+'-t'+t] = { id: meta.domain+'-t'+t, domain: dk, tier: t, options: meta.options, x: pos.x, y: pos.y };
+          }
+        });
+        return nodes;
+      }
+
+      function loadAll(){
+        try{
+          const c = storage.get('skilltree-config');
+          CONFIG = c && c.value ? JSON.parse(c.value) : buildDefaultConfig();
+        }catch(e){ CONFIG = buildDefaultConfig(); }
+        if (!CONFIG.domains) CONFIG.domains = JSON.parse(JSON.stringify(DEFAULT_DOMAINS));
+        try{
+          const p = storage.get('skilltree-progress');
+          progress = p && p.value ? JSON.parse(p.value) : {};
+        }catch(e){ progress = {}; }
+        renderLegend();
+        render();
+      }
+
+      function renderLegend(){
+        const el = document.getElementById('domain-legend');
+        if (!el) return;
+        el.innerHTML = domainKeys().map(dk => {
+          const d = CONFIG.domains[dk];
+          return `<div class="flex items-center gap-2 text-st-text-dim"><span class="w-[9px] h-[9px] rounded-full shrink-0" style="background:${d.hex}"></span>${escapeHtml(d.label)}</div>`;
+        }).join('');
+      }
+      function saveConfig(){ storage.set('skilltree-config', JSON.stringify(CONFIG)); }
+      function saveProgress(){ storage.set('skilltree-progress', JSON.stringify(progress)); }
+
+      function isCompleted(id){ return !!(progress[id] && progress[id].completed); }
+      function isPicked(id){ return !!(progress[id] && progress[id].optionId); }
+
+      function edgeVisible(e, idSet){ return idSet.has(e.from) && idSet.has(e.to); }
+
+      function isUnlocked(node, idSet){
+        if (node.isHub) return true;
+        const sources = CONFIG.edges.filter(e => e.type==='prereq' && e.to===node.id && edgeVisible(e, idSet)).map(e=>e.from);
+        if (sources.length === 0) return true;
+        return sources.every(s => s === 'hub' || isCompleted(s));
+      }
+
+      const svg = document.getElementById('grid');
+      let currentNodes = {};
+
+      function nodeState(node, idSet){
+        if (node.isHub) return 'hub';
+        if (!isUnlocked(node, idSet)) return 'locked';
+        if (isCompleted(node.id)) return 'done';
+        if (isPicked(node.id)) return 'picked';
+        return 'open';
+      }
+
+      function render(){
+        currentNodes = buildNodesForRender();
+        const idSet = new Set(Object.keys(currentNodes));
+        svg.innerHTML = '';
+        const svgNS = 'http://www.w3.org/2000/svg';
+
+        CONFIG.edges.forEach(e => {
+          if (!edgeVisible(e, idSet)) return;
+          const a = currentNodes[e.from], b = currentNodes[e.to];
+          const active = (a.isHub || isCompleted(a.id)) && (isPicked(b.id) || isCompleted(b.id));
+          const line = document.createElementNS(svgNS,'path');
+          line.setAttribute('d', `M ${a.x} ${a.y} L ${b.x} ${b.y}`);
+          line.setAttribute('class', 'edge' + (active ? ' active':''));
+          if (e.type === 'link') line.setAttribute('stroke-dasharray','2 5');
+          svg.appendChild(line);
+        });
+
+        const hub = currentNodes['hub'];
+        const hubG = document.createElementNS(svgNS,'g');
+        hubG.innerHTML = `
+          <circle cx="${hub.x}" cy="${hub.y}" r="46" class="hub-core"/>
+          <circle cx="${hub.x}" cy="${hub.y}" r="54" fill="none" stroke="#3a4653" stroke-width="1" stroke-dasharray="3 4"/>
+          <text x="${hub.x}" y="${hub.y-4}" class="hub-glyph" style="font-size:11px;">CORE</text>
+          <text x="${hub.x}" y="${hub.y+12}" class="hub-glyph" style="font-size:9px;fill:#7c8a9a;">ENGINEER</text>`;
+        svg.appendChild(hubG);
+
+        Object.values(currentNodes).forEach(node => {
+          if (node.isHub) return;
+          const state = nodeState(node, idSet);
+          const color = CONFIG.domains[node.domain].hex;
+          const r = 26;
+          const g = document.createElementNS(svgNS,'g');
+          g.setAttribute('class', 'node' + (state==='locked' ? ' locked':''));
+
+          let fill='#1a212b', stroke='#3d4956', glyphFill='#5c6773', ringExtra='';
+          if (state==='locked'){ fill='#161b22'; stroke='#2a323d'; glyphFill='#3d4956'; }
+          if (state==='open'){ stroke=color; glyphFill=color; }
+          if (state==='picked'){ fill='rgba(87,224,209,0.12)'; stroke='var(--line-active)'; glyphFill=color;
+            ringExtra = `<circle cx="${node.x}" cy="${node.y}" r="${r+7}" fill="none" stroke="var(--line-active)" stroke-width="1.5" stroke-dasharray="2 4"><animateTransform attributeName="transform" type="rotate" from="0 ${node.x} ${node.y}" to="360 ${node.x} ${node.y}" dur="8s" repeatCount="indefinite"/></circle>`; }
+          if (state==='done'){ fill=color; stroke=color; glyphFill='#1a1206'; }
+
+          g.innerHTML = `
+            ${ringExtra}
+            <circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>
+            <text x="${node.x}" y="${node.y}" class="node-glyph" style="font-size:13px;fill:${glyphFill}">${state==='done' ? '✓' : (state==='locked' ? '🔒' : CONFIG.domains[node.domain].glyph)}</text>
+            <text x="${node.x}" y="${node.y+r+16}" class="node-label">T${node.tier}</text>`;
+          svg.appendChild(g);
+
+          g.addEventListener('mouseenter', ev => showTooltip(ev, node, state));
+          g.addEventListener('mousemove', moveTooltip);
+          g.addEventListener('mouseleave', hideTooltip);
+          g.addEventListener('click', () => {
+            if (mode === 'build'){ openEditor(node); return; }
+            if (state === 'locked') return;
+            openModal(node);
+          });
+        });
+
+        updateSidebar();
+      }
+
+      const topbarText = document.getElementById('topbar-text');
+      const tooltip = document.getElementById('tooltip');
+
+      function nodeSummary(node, state){
+        const dom = CONFIG.domains[node.domain].label;
+        if (mode === 'build') return `${dom} · T${node.tier} — click to edit content and edges.`;
+        if (state==='locked') return `${dom} · T${node.tier} — locked. Complete its prerequisite first.`;
+        if (state==='done'){ const p = node.options.find(o=>o.id===progress[node.id].optionId); return `${dom} · T${node.tier} — cleared: "${p ? p.title : '(deleted option)'}"`; }
+        if (state==='picked'){ const p = node.options.find(o=>o.id===progress[node.id].optionId); return `${dom} · T${node.tier} — in progress: "${p ? p.title : '(deleted option)'}"`; }
+        return `${dom} · T${node.tier} — open. ${node.options.length} project option${node.options.length===1?'':'s'}.`;
+      }
+      function showTooltip(ev, node, state){
+        topbarText.textContent = nodeSummary(node, state);
+        tooltip.innerHTML = `<div class="font-semibold mb-[2px]">${CONFIG.domains[node.domain].label}</div><div class="text-st-text-dim text-[11px]">Tier ${node.tier} · ${node.options.length} option${node.options.length===1?'':'s'}</div>`;
+        tooltip.style.opacity = 1; moveTooltip(ev);
+      }
+      function moveTooltip(ev){ tooltip.style.left = (ev.clientX+16)+'px'; tooltip.style.top = (ev.clientY+16)+'px'; }
+      function hideTooltip(){ tooltip.style.opacity = 0; topbarText.textContent = mode==='build' ? 'Build mode — click a node to edit it.' : 'Hover a node to inspect it.'; }
+
+      const overlay = document.getElementById('modal-overlay');
+      const modalBody = document.getElementById('modal-body');
+      let pendingOptionId = null;
+
+      function openModal(node){
+        pendingOptionId = (progress[node.id] && progress[node.id].optionId) || null;
+        renderModal(node.id);
+        showOverlay(overlay);
+      }
+      function closeModal(){ editDraft = null; hideOverlay(overlay); }
+      overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+      function renderModal(nodeId){
+        const node = currentNodes[nodeId];
+        const idSet = new Set(Object.keys(currentNodes));
+        const state = nodeState(node, idSet);
+        const dom = CONFIG.domains[node.domain];
+        const pillBase = "inline-block font-jetbrains text-[10.5px] px-2 py-[3px] rounded-[20px] mb-3";
+        let pill = '';
+        if (state==='done') pill = `<div class="${pillBase} bg-[rgba(146,198,94,0.15)] text-st-lime">✓ Cleared</div>`;
+        else if (state==='picked') pill = `<div class="${pillBase} bg-[rgba(87,224,209,0.12)] text-st-line-active">In progress</div>`;
+
+        const cardBase = "rounded-[9px] px-[14px] py-[13px] mb-[10px] cursor-pointer border transition-colors";
+        const cardChosen = "border-st-line-active bg-[rgba(87,224,209,0.06)]";
+        const cardUnchosen = "border-st-panel-border hover:border-[#3d4956] hover:bg-[#171f29]";
+        const cards = node.options.map(o => `
+          <div class="${cardBase} ${pendingOptionId===o.id ? cardChosen : cardUnchosen}" data-opt="${o.id}">
+            <div class="font-semibold text-[13.5px] mb-1">${o.title}</div>
+            <div class="text-[12px] text-st-text-dim leading-[1.45]">${o.desc}</div>
+            <div class="mt-2 flex gap-[6px] flex-wrap">${(o.tags||[]).map(t=>`<span class="${CLS.tag}">${t}</span>`).join('')}</div>
+          </div>`).join('') || `<div class="text-st-text-dim text-[12.5px]">No projects defined for this node yet — add some in Build mode.</div>`;
+
+        modalBody.innerHTML = `
+          ${pill}
+          <h2 class="${CLS.modalH2}">${dom.label}</h2>
+          <div class="${CLS.modalSub}">Tier ${node.tier} · pick one project to commit to</div>
+          ${cards}
+          <div class="${CLS.modalActions}">
+            <button class="${CLS.btn}" id="btn-close">Close</button>
+            ${state==='picked'||state==='done' ? `<button class="${CLS.btnComplete}" id="btn-complete">${state==='done'?'Cleared ✓':'Mark complete'}</button>` : ''}
+            <button class="${CLS.btnPrimary}" id="btn-commit" ${pendingOptionId?'':'disabled'}>Commit</button>
+          </div>`;
+
+        modalBody.querySelectorAll('[data-opt]').forEach(card => card.addEventListener('click', () => {
+          if (state==='done') return;
+          pendingOptionId = card.getAttribute('data-opt');
+          renderModal(nodeId);
+        }));
+        document.getElementById('btn-close').addEventListener('click', closeModal);
+        const commitBtn = document.getElementById('btn-commit');
+        if (commitBtn) commitBtn.addEventListener('click', () => {
+          progress[nodeId] = progress[nodeId] || {};
+          progress[nodeId].optionId = pendingOptionId;
+          saveProgress(); render(); renderModal(nodeId);
+        });
+        const completeBtn = document.getElementById('btn-complete');
+        if (completeBtn && state!=='done') completeBtn.addEventListener('click', () => {
+          progress[nodeId].completed = true; saveProgress(); render(); closeModal();
+        });
+      }
+
+      function updateSidebar(){
+        const total = Object.keys(currentNodes).length - 1;
+        const done = Object.values(progress).filter(p=>p.completed).length;
+        document.getElementById('lv-text').textContent = `S.LV ${done}`;
+        document.getElementById('bar-fill').style.width = (total? done/total*100:0) + '%';
+        document.getElementById('count-text').textContent = `${done} / ${total} nodes cleared`;
+        document.getElementById('level-count').textContent = CONFIG.levels;
+      }
+
+      document.getElementById('reset-btn').addEventListener('click', resetProgress);
+      document.getElementById('reset-btn-2').addEventListener('click', resetProgress);
+      function resetProgress(){
+        if (!confirm('Reset all progress on this grid?')) return;
+        progress = {}; saveProgress(); render();
+      }
+
+      const sidebarPlay = document.getElementById('sidebar-play');
+      const sidebarBuild = document.getElementById('sidebar-build');
+      document.getElementById('mode-play').addEventListener('click', () => setMode('play'));
+      document.getElementById('mode-build').addEventListener('click', () => setMode('build'));
+      const MODE_ACTIVE = ["bg-st-line-active", "text-[#0b1015]", "font-bold"];
+      const MODE_IDLE = ["bg-transparent", "text-st-text-dim"];
+      function setModeButton(btn, active){
+        MODE_ACTIVE.forEach(c => btn.classList.toggle(c, active));
+        MODE_IDLE.forEach(c => btn.classList.toggle(c, !active));
+      }
+      function setMode(m){
+        mode = m;
+        setModeButton(document.getElementById('mode-play'), m==='play');
+        setModeButton(document.getElementById('mode-build'), m==='build');
+        sidebarPlay.style.display = m==='play' ? 'flex' : 'none';
+        sidebarBuild.style.display = m==='build' ? 'flex' : 'none';
+        hideTooltip();
+        render();
+      }
+
+      document.getElementById('level-plus').addEventListener('click', () => changeLevels(1));
+      document.getElementById('level-minus').addEventListener('click', () => changeLevels(-1));
+      function changeLevels(delta){
+        const next = Math.min(MAX_LEVELS, Math.max(MIN_LEVELS, CONFIG.levels + delta));
+        if (next === CONFIG.levels) return;
+        CONFIG.levels = next;
+        saveConfig(); render();
+      }
+
+      let editDraft = null;
+
+      function openEditor(node){
+        const meta = CONFIG.nodeMeta[node.id];
+        editDraft = {
+          nodeId: node.id,
+          options: meta.options.map(o => ({ ...o, tags: [...(o.tags || [])] })),
+        };
+        renderEditor(node.id);
+        showOverlay(overlay);
+        modalBody.dataset.editing = node.id;
+      }
+
+      function syncDraftFromDom(){
+        if (!editDraft) return;
+        modalBody.querySelectorAll('[data-field]').forEach(input => {
+          const idx = parseInt(input.getAttribute('data-idx'));
+          const field = input.getAttribute('data-field');
+          if (!editDraft.options[idx]) return;
+          if (field === 'tags') editDraft.options[idx].tags = input.value.split(',').map(s=>s.trim()).filter(Boolean);
+          else editDraft.options[idx][field] = input.value;
+        });
+      }
+
+      function renderEditor(nodeId){
+        const meta = CONFIG.nodeMeta[nodeId];
+        const dom = CONFIG.domains[meta.domain];
+
+        const optionsHtml = editDraft.options.map((o, i) => `
+          <div class="${CLS.editOption}" data-idx="${i}">
+            <div class="flex justify-between items-center"><label class="${CLS.editLabel}">Project ${i+1}</label><button class="${CLS.smallX}" data-remove="${i}">✕</button></div>
+            <input class="${CLS.editInput}" type="text" data-field="title" data-idx="${i}" value="${escapeAttr(o.title)}" placeholder="Project title">
+            <textarea class="${CLS.editInput} resize-y min-h-[44px]" data-field="desc" data-idx="${i}" placeholder="Short description">${escapeHtml(o.desc)}</textarea>
+            <input class="${CLS.editInput}" type="text" data-field="tags" data-idx="${i}" value="${escapeAttr((o.tags||[]).join(', '))}" placeholder="Tags, comma separated">
+          </div>`).join('');
+
+        const others = visibleNodeIds().filter(id => id !== nodeId);
+        const labelFor = id => id==='hub' ? 'Core' : `${CONFIG.domains[currentNodes[id].domain].label} · T${currentNodes[id].tier}`;
+
+        const prereqList = others.map(id => {
+          const checked = CONFIG.edges.some(e => e.type==='prereq' && e.from===id && e.to===nodeId);
+          return `<label class="${CLS.checkListLabel}"><input type="checkbox" class="accent-st-line-active" data-prereq-src="${id}" ${checked?'checked':''}>${labelFor(id)}</label>`;
+        }).join('');
+
+        const linkList = others.map(id => {
+          const checked = CONFIG.edges.some(e => e.type==='link' && ((e.from===id&&e.to===nodeId)||(e.from===nodeId&&e.to===id)));
+          return `<label class="${CLS.checkListLabel}"><input type="checkbox" class="accent-st-line-active" data-link-with="${id}" ${checked?'checked':''}>${labelFor(id)}</label>`;
+        }).join('');
+
+        modalBody.innerHTML = `
+          <h2 class="${CLS.modalH2}">${dom.label} · T${meta.tier}</h2>
+          <div class="${CLS.modalSub}">Editing node content and connections</div>
+
+          <div class="${CLS.sectionTitle}">Projects (orbs)</div>
+          ${optionsHtml || '<div class="text-st-text-dim text-[12px]">No projects yet.</div>'}
+          <button class="${CLS.textBtn}" id="add-option">+ Add project</button>
+
+          <div class="${CLS.sectionTitle}">Requires (prereq — completing these unlocks this node)</div>
+          <div class="${CLS.checkList}">${prereqList || '<span class="text-st-text-dim text-[12px]">No other nodes visible.</span>'}</div>
+
+          <div class="${CLS.sectionTitle}">Linked (reference line only, no gating)</div>
+          <div class="${CLS.checkList}">${linkList || '<span class="text-st-text-dim text-[12px]">No other nodes visible.</span>'}</div>
+
+          <div class="${CLS.modalActions}">
+            <button class="${CLS.btn}" id="btn-close-edit">Close</button>
+            <button class="${CLS.btnPrimary}" id="btn-save-edit">Save changes</button>
+          </div>`;
+
+        document.getElementById('btn-close-edit').addEventListener('click', () => { editDraft = null; closeModal(); });
+        document.getElementById('add-option').addEventListener('click', () => {
+          syncDraftFromDom();
+          editDraft.options.push(makeOption(nodeId, null, editDraft.options.length));
+          renderEditor(nodeId);
+        });
+        modalBody.querySelectorAll('[data-remove]').forEach(btn => btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-remove'));
+          if (editDraft.options.length <= 1){ alert('Keep at least one project on this node.'); return; }
+          syncDraftFromDom();
+          editDraft.options.splice(idx,1);
+          renderEditor(nodeId);
+        }));
+        modalBody.querySelectorAll('[data-prereq-src]').forEach(cb => cb.addEventListener('change', () => {
+          const src = cb.getAttribute('data-prereq-src');
+          const existingIdx = CONFIG.edges.findIndex(e => e.type==='prereq' && e.from===src && e.to===nodeId);
+          if (cb.checked && existingIdx === -1) CONFIG.edges.push({ from:src, to:nodeId, type:'prereq' });
+          if (!cb.checked && existingIdx !== -1) CONFIG.edges.splice(existingIdx,1);
+          saveConfig(); render();
+        }));
+        modalBody.querySelectorAll('[data-link-with]').forEach(cb => cb.addEventListener('change', () => {
+          const other = cb.getAttribute('data-link-with');
+          const existingIdx = CONFIG.edges.findIndex(e => e.type==='link' && ((e.from===other&&e.to===nodeId)||(e.from===nodeId&&e.to===other)));
+          if (cb.checked && existingIdx === -1) CONFIG.edges.push({ from:nodeId, to:other, type:'link' });
+          if (!cb.checked && existingIdx !== -1) CONFIG.edges.splice(existingIdx,1);
+          saveConfig(); render();
+        }));
+        document.getElementById('btn-save-edit').addEventListener('click', () => {
+          syncDraftFromDom();
+          const survivingIds = new Set(editDraft.options.map(o => o.id));
+          if (progress[nodeId] && progress[nodeId].optionId && !survivingIds.has(progress[nodeId].optionId)){
+            delete progress[nodeId].optionId; delete progress[nodeId].completed; saveProgress();
+          }
+          meta.options = editDraft.options;
+          editDraft = null;
+          saveConfig(); render(); closeModal();
+        });
+      }
+
+      function escapeHtml(s){ return (s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+      function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
+
+      const jsonOverlay = document.getElementById('json-overlay');
+      const jsonModalBody = document.getElementById('json-modal-body');
+      document.getElementById('json-btn').addEventListener('click', () => {
+        jsonModalBody.innerHTML = `
+          <h2 class="font-jetbrains text-[15px] m-0 mb-[10px]">Raw config JSON</h2>
+          <textarea id="json-text" class="w-full h-[340px] bg-[#0e131a] border border-st-panel-border rounded-lg text-st-text-main font-jetbrains text-[11.5px] p-3">${escapeHtml(JSON.stringify(CONFIG, null, 2))}</textarea>
+          <div class="${CLS.modalActions}">
+            <button class="${CLS.btn}" id="json-close">Cancel</button>
+            <button class="${CLS.btnPrimary}" id="json-apply">Apply</button>
+          </div>`;
+        showOverlay(jsonOverlay);
+        document.getElementById('json-close').addEventListener('click', () => hideOverlay(jsonOverlay));
+        document.getElementById('json-apply').addEventListener('click', () => {
+          try{
+            const parsed = JSON.parse(document.getElementById('json-text').value);
+            if (!parsed.levels || !parsed.nodeMeta || !parsed.edges) throw new Error('Missing required keys: levels, nodeMeta, edges');
+            CONFIG = parsed;
+            if (!CONFIG.domains) CONFIG.domains = JSON.parse(JSON.stringify(DEFAULT_DOMAINS));
+            saveConfig(); renderLegend(); render();
+            hideOverlay(jsonOverlay);
+          }catch(e){ alert('Invalid config: ' + e.message); }
+        });
+      });
+      jsonOverlay.addEventListener('click', e => { if (e.target === jsonOverlay) hideOverlay(jsonOverlay); });
+
+      loadAll();
+    </script>
+  </body>
+</html>
