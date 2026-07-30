@@ -3,7 +3,7 @@ title: "SORT Tracker"
 description: "Python implementation of the SORT tracking algorithm"
 pubDate: "Jun 30 2026"
 heroImage: "./media/hero_image.png"
-tags: ["Python", "OpenCV", "YOLOv11", "Kalman Filter", "Computer Vision", "Tracking"]
+tags: ["Python", "YOLOv11", "Kalman Filter", "Computer Vision", "Tracking"]
 ---
 
 An implementation of the SORT (Simple Online and Realtime Tracking) algorithm using a custom Kalman Filter for predicting object positions frame-to-frame. Detections are provided by YOLOv11, and tracked objects are updated by associating Kalman Filter predictions with new observations using the Hungarian algorithm.
