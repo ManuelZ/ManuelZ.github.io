@@ -1,0 +1,173 @@
+---
+title: "Measuring Avocados with a Stereo Camera"
+description: "A pipeline for capturing stereo frames with an OAK-D Lite camera, estimating depth with FoundationStereo on a cloud GPU, and measuring distances and volumes of avocados."
+pubDate: "Jul 30 2026"
+heroImage: "./media/depth_overlay.png"
+tags: ["Stereo Vision", "Oak-D Lite", "Open3D", "ICP", "Depth Estimation", "SAM2", "Point Clouds", "Computer Vision"]
+---
+
+## Introduction
+
+**This post is still being written.**
+
+Avocados need to be harvested at an appropriate time so that they can reach the customer in optimal conditions. If they become overripe, avocados drop from the tree, bruising and spoiling. If they are harvested too early, they fail to ripen properly, resulting in hard, rubbery flesh and poor flavor.
+
+Monitoring their growth over time and estimating their volume could help determine the optimal harvest window.
+
+This project explores several approaches to estimating avocado volume from stereo imagery, ranging in complexity and accuracy, in order to evaluate which is best suited for practical use in the field. These range from simple distance measurements, to solid-of-revolution models built from a single view using circle or ellipse fitting around an estimated axis, to full multi-view reconstructions. The most complete pipeline captures stereo frames with an OAK-D Lite camera, estimates depth offline with FoundationStereo, segments the object with SAM2, and turns the result into distances, volumes, and fused 3D point clouds.
+
+### Method 1: only measuring lengths
+
+Measuring real distances from a single image is not possible without a reference and even so, all distances would need to be measured in the same plane of the reference length.
+Using a stereo camera one can obtain a depth map that allows calculating the real world distance between points in a depth map image. 
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/length_single_view.png" alt="Length measured between two clicked points on the depth map" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Real-world length calculated from the depth map, between two clicked points.</figcaption>
+</figure>
+
+In practice, this is close to how maturity is often assessed on the field: length and width measured with calipers, then compared against reference ranges for the variety, as a low-effort proxy for ripeness. But this is a manual process. Computer Vision can automate this, but to obtain real lengths, the camera plane needs to be parallel to avocado's longitudinal axis, otherwise the measured length will be a function of the inclination angle of the avocado.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/inclined.png" alt="Avocado tilted relative to the camera plane" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Consider the camera looking down at the avocado.</figcaption>
+</figure>
+
+### Method 2: depth from one view and solid of revolution from the silhouette's contour
+
+The segmentation mask's contour is rotated around its long-axis frame (found from the region's second-order moments), and a radius profile is sampled from the width of one edge (shown in yellow/orange in the image below) at each axial position, then integrated as stacked disks of revolution. Instead of using the full depth map, this method only needs one number to convert that pixel-space radius profile into millimeters: a real-world scale factor. The avocado's surface isn't flat, though: the center of the visible face bulges toward the camera, while the silhouette's contour is where the surface curves away and sits farther from the camera. Since the scale factor should reflect the depth at the contour, not the closer bulging center, it's taken as a high percentile (rather than the mean) of the depth values inside the mask, which approximates the rim's depth.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/depth_single_view_silhouette.png" alt="Depth map of the avocado with the segmentation silhouette contour" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Depth map from a single view, with the silhouette contour used to build the radius profile.</figcaption>
+</figure>
+
+### Method 3: depth from one view, axis estimation and solid of revolution based on circles
+
+This method works on the point cloud generated from a single depth image, instead of a flat contour, which allows estimating the avocado's long axis rather than assuming the camera looks straight at it. PCA on the masked points gives a first estimate of that axis and its centroid, but a stereo camera only sees the front half of the avocado, and that missing back half pulls the PCA estimate off the true axis, toward the camera. A least-squares fit then refines that axis pose, minimizing the distance between the point cloud and a solid-of-revolution surface built from stacked circles along the axis.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/pointcloud_single_view_circles_bottom.png" alt="Point cloud with the fitted axis and circular cross-sections, viewed from below" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Point cloud with the fitted axis and the stacked-circle surface built around it.</figcaption>
+</figure>
+
+### Method 4: depth from one view, axis estimation and solid of revolution based on ellipses
+
+Real avocado cross-sections aren't perfect circles, so instead of one radius per slice, this method fits an ellipse with two semi-axes: one across the visible width (side-to-side, well constrained by the point cloud) and one along the depth direction, toward/away from the camera (poorly constrained, since the camera only ever sees the front half). Both are fit jointly, by least squares, against the cloud.
+
+That depth semi-axis is barely observed, the fit can't always tell a genuine change in shape apart from a small error in the estimated axis pose, the two look similar in the data, so an error in one can get absorbed as a distortion in the other. To stop the fit from over-correcting, the ellipse eccentricity is kept within a plausible range, and a curvature penalty smooths out spikes that would otherwise come from sparse, outlier-heavy bins. The resulting elliptical profile is what gets integrated into the final volume.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/pointcloud_single_view_ellipses_bottom.png" alt="Point cloud with the fitted axis and elliptical cross-sections, viewed from below" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Point cloud with the fitted axis and the stacked-ellipse surface built around it.</figcaption>
+</figure>
+
+### Method 5: depth from multiple views and solid of revolution
+
+The axisymmetry assumption is dropped entirely by fusing several views captured while moving the camera around the object: depth is estimated per view, SAM2 tracks the object mask across the sequence, and the resulting partial point clouds are chained with point-to-plane ICP and refined with pose graph optimization using loop closures between overlapping views.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/pointcloud_multi_view.png" alt="Point cloud fused from multiple views via ICP registration" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Point cloud from several views, registered with ICP and fused into a single model.</figcaption>
+</figure>
+
+
+## The setup
+
+The hardware is a Luxonis OAK-D Lite, a stereo camera with a 7.5 cm baseline that can compute depth on-device. A capture script saves synchronized frame sets: RGB, rectified left/right grayscale pairs, on-device depth maps and the camera intrinsics:
+
+```
+data/frames/
+├── rgb/          # Color frames
+├── left/         # Rectified left grayscale frames
+├── right/        # Rectified right grayscale frames
+├── depth/        # Depth maps as .npy files (uint16, mm)
+└── intrinsics.npy
+```
+
+The on-device depth is fast to calculate, but noisy, especially at object boundaries. That motivated a second, offline depth source: [FoundationStereo](https://nvlabs.github.io/FoundationStereo/), a foundation model for stereo matching that produces much cleaner disparity maps from the same rectified pairs.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/00000007.png" alt="FoundationStereo depth estimate for an avocado" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">FoundationStereo's depth estimate; cleaner than the on-device depth, especially at object boundaries.</figcaption>
+</figure>
+
+## Running FoundationStereo on a cloud GPU
+
+FoundationStereo is too heavy to run comfortably on a laptop, so the ONNX model was deployed as a [Modal](https://modal.com) GPU serverless endpoint that spins up a container on demand and scales to zero when idle.
+
+A client script streams a whole capture session. Left/right images are paired by filename and processed sequentially on the same warm GPU container, avoiding a cold start per frame.
+
+## Measuring distances and volume
+
+An interactive viewer allows displaying the RGB image blended with a colorized depth map. The two images don't live on the same pixel grid: depth is computed on the **rectified left** camera's frame, while the color frame comes from the **RGB** camera frame, located a few centimeters away and with different intrinsics. Overlaying them directly would misalign every object by a parallax-dependent offset.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/depth_overlay.png" alt="RGB frame blended with a colorized depth map" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">RGB frame blended with the depth map, warped onto the RGB pixel grid.</figcaption>
+</figure>
+
+The fix is to warp the depth map onto the RGB pixel grid with a forward splat, using the calibration data: the intrinsics of the rectified left camera, the intrinsics of the RGB camera, and the 4x4 extrinsic transform between the two frames (which already embeds the rectification rotation). 
+
+1. **Unproject** each rectified-left pixel into a 3D point in the rectified-left frame: the inverse of the intrinsic matrix recovers the pixel's viewing ray, and multiplying that ray by the measured depth locates the point in space.
+2. **Transform** the point into the RGB camera frame with the extrinsics.
+3. **Project** it into RGB pixel coordinates with the RGB intrinsics. The point's distance along the RGB camera's optical axis becomes the new depth value.
+4. **Scatter with a z-buffer.** Because the two cameras are located in different positions, two source pixels seeing different surfaces (a foreground edge and the wall behind it) can land on the *same* RGB pixel. Written in arbitrary order, the occluded surface could bleed through the foreground, so per pixel the nearest depth wins. 
+
+
+Regarding "forward splat and z-buffer", quoting directly from [1]:
+
+> Intuitively, we consider the target frame image as an empty canvas. Then, each source point adds paint onto the canvas, but only at the pixels immediately around its projection. Via this process, many source points may contribute to the same target image pixel, and we want the closer ones to occlude the further ones. In traditional rendering, this can be achieved using a z-buffer, with only the closest point contributing to the rendering of a pixel.
+
+There are RGB pixels with no depth value and they show up as black holes in the overlay.
+
+The warped depth is then normalized over a fixed visualization depth range, colorized with the Turbo colormap (zero-depth pixels kept black), and alpha-blended with the RGB frame.
+
+The viewer then lets you:
+
+- **Left-click two points** to read the straight-line 3D distance between them in millimeters.
+- **Right-click** to drop SAM2 prompt points on an object, press `s` to segment it, then `v` to estimate its volume in milliliters.
+
+<figure style="max-width: 400px; margin: 0 auto;">
+  <img src="./media/segmentation.png" alt="SAM2 segmentation of the avocado" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">SAM2 segmentation of the avocado from clicked prompt points.</figcaption>
+</figure>
+
+A single stereo capture only sees the front of the object, so the point cloud covers roughly half of its surface.
+
+For a near-axisymmetric object like an avocado, the solid-of-revolution approach works well even with only the front visible:
+
+1. Clean the cloud with statistical outlier removal (this kills the flying pixels, which otherwise inflate the radius profile).
+2. Find the long axis with PCA and convert points to cylindrical coordinates around it.
+3. Bin along the axis and take a high percentile (95th–98th) of radial distances per bin as the radius profile — under axial symmetry, the widest visible points of each slice lie at the true radius.
+4. Integrate with a conical-frustum sum: treat the volume between consecutive slices as a truncated cone rather than a flat disk, which amounts to interpolating the radius profile linearly instead of in steps. The difference matters at coarse slice counts.
+
+## Fusing multiple views
+
+To remove the symmetry assumption entirely, several views captured while moving the camera around the object can be fused into one cloud. The pipeline has three stages:
+
+1. **Estimate depth for every view.** Each stereo pair of the capture sequence is sent to the FoundationStereo serverless GPU endpoint, producing one clean depth map per view.
+2. **Segment and track the object across the sequence.** SAM2's video propagation makes this fast: instead of segmenting every frame by hand, prompt points are clicked once every N frames, and SAM2 propagates the mask through the frames in between. The result is one binary object mask per frame.
+3. **Register and fuse the masked clouds.** Each frame's masked depth becomes a partial point cloud, the clouds are aligned to each other, and the aligned clouds are merged into a single model of the object.
+
+Per frame, the depth is warped onto the RGB grid, background depths are sigma-clipped away, and the remaining pixels are unprojected into a downsampled point cloud. Consecutive clouds are then chained with two-stage point-to-plane ICP and the pose chain is refined with pose graph optimization using loop closures between all overlapping non-adjacent views.
+
+The convex hull of the fused cloud only bounds the *observed* surface, so with a partial arc the hull volume still underestimates until the views cover the whole object.
+
+## Challenges & Learnings
+
+- **Disparity quality suddenly poor**: The FoundationStereo ONNX graph already normalizes internally. Its first ops divide by 255 and apply ImageNet mean/std, expecting raw 0–255 RGB input. Dividing the images by 255 again during preprocessing normalizes twice and degrades disparity quality.
+- **Volume estimates too large**: pixels at object boundaries inflate the radius profile. Need statistical outlier removal or a refined segmentation model.
+- **ICP drifts between views**: cross-check with the single-view solid-of-revolution volume; look for a strong disagreement.
+
+
+## References
+
+[1] S. Tulsiani, R. Tucker, and N. Snavely, “Layer-structured 3D Scene Inference via View Synthesis.” arXiv, 2018. doi: 10.48550/ARXIV.1807.10264. Available: https://arxiv.org/abs/1807.10264. [Accessed: July 27, 2026]
+
+[2] [FoundationStereo: Zero-Shot Stereo Matching](https://nvlabs.github.io/FoundationStereo/)
+[3] [Precise 2D vision solutions for estimating avocado physical characteristics](https://www.nature.com/articles/s41598-025-19238-6) — 250 avocados, 3.43% mean absolute volume error
+[4] [Real-Time Size and Mass Estimation of Slender Axi-Symmetric Fruit/Vegetable Using a Single Top View Image](https://pmc.ncbi.nlm.nih.gov/articles/PMC7570801/)
+[5] [Axis-Aligned 3D Stalk Diameter Estimation from RGB-D Imagery](https://arxiv.org/pdf/2509.12511)
+[6] [Luxonis DepthAI documentation](https://docs.luxonis.com/)
+[7] [Modal — serverless GPU compute](https://modal.com/)
