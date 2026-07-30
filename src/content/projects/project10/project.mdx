@@ -6,6 +6,16 @@ heroImage: "./media/depth_overlay.png"
 tags: ["Stereo Vision", "Oak-D Lite", "Open3D", "ICP", "Depth Estimation", "SAM2", "Point Clouds", "Computer Vision"]
 ---
 
+import lengthSingleView from './media/length_single_view.png';
+import inclined from './media/inclined.png';
+import depthSingleViewSilhouette from './media/depth_single_view_silhouette.png';
+import pointcloudSingleViewCirclesBottom from './media/pointcloud_single_view_circles_bottom.png';
+import pointcloudSingleViewEllipsesBottom from './media/pointcloud_single_view_ellipses_bottom.png';
+import pointcloudMultiView from './media/pointcloud_multi_view.png';
+import foundationStereoDepth from './media/00000007.png';
+import depthOverlay from './media/depth_overlay.png';
+import segmentation from './media/segmentation.png';
+
 ## Introduction
 
 **This post is still being written.**
@@ -22,14 +32,14 @@ Measuring real distances from a single image is not possible without a reference
 Using a stereo camera one can obtain a depth map that allows calculating the real world distance between points in a depth map image. 
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/length_single_view.png" alt="Length measured between two clicked points on the depth map" style="width: 100%;" />
+  <img src={lengthSingleView.src} alt="Length measured between two clicked points on the depth map" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Real-world length calculated from the depth map, between two clicked points.</figcaption>
 </figure>
 
 In practice, this is close to how maturity is often assessed on the field: length and width measured with calipers, then compared against reference ranges for the variety, as a low-effort proxy for ripeness. But this is a manual process. Computer Vision can automate this, but to obtain real lengths, the camera plane needs to be parallel to avocado's longitudinal axis, otherwise the measured length will be a function of the inclination angle of the avocado.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/inclined.png" alt="Avocado tilted relative to the camera plane" style="width: 100%;" />
+  <img src={inclined.src} alt="Avocado tilted relative to the camera plane" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Consider the camera looking down at the avocado.</figcaption>
 </figure>
 
@@ -38,7 +48,7 @@ In practice, this is close to how maturity is often assessed on the field: lengt
 The segmentation mask's contour is rotated around its long-axis frame (found from the region's second-order moments), and a radius profile is sampled from the width of one edge (shown in yellow/orange in the image below) at each axial position, then integrated as stacked disks of revolution. Instead of using the full depth map, this method only needs one number to convert that pixel-space radius profile into millimeters: a real-world scale factor. The avocado's surface isn't flat, though: the center of the visible face bulges toward the camera, while the silhouette's contour is where the surface curves away and sits farther from the camera. Since the scale factor should reflect the depth at the contour, not the closer bulging center, it's taken as a high percentile (rather than the mean) of the depth values inside the mask, which approximates the rim's depth.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/depth_single_view_silhouette.png" alt="Depth map of the avocado with the segmentation silhouette contour" style="width: 100%;" />
+  <img src={depthSingleViewSilhouette.src} alt="Depth map of the avocado with the segmentation silhouette contour" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Depth map from a single view, with the silhouette contour used to build the radius profile.</figcaption>
 </figure>
 
@@ -47,7 +57,7 @@ The segmentation mask's contour is rotated around its long-axis frame (found fro
 This method works on the point cloud generated from a single depth image, instead of a flat contour, which allows estimating the avocado's long axis rather than assuming the camera looks straight at it. PCA on the masked points gives a first estimate of that axis and its centroid, but a stereo camera only sees the front half of the avocado, and that missing back half pulls the PCA estimate off the true axis, toward the camera. A least-squares fit then refines that axis pose, minimizing the distance between the point cloud and a solid-of-revolution surface built from stacked circles along the axis.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/pointcloud_single_view_circles_bottom.png" alt="Point cloud with the fitted axis and circular cross-sections, viewed from below" style="width: 100%;" />
+  <img src={pointcloudSingleViewCirclesBottom.src} alt="Point cloud with the fitted axis and circular cross-sections, viewed from below" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Point cloud with the fitted axis and the stacked-circle surface built around it.</figcaption>
 </figure>
 
@@ -58,7 +68,7 @@ Real avocado cross-sections aren't perfect circles, so instead of one radius per
 That depth semi-axis is barely observed, the fit can't always tell a genuine change in shape apart from a small error in the estimated axis pose, the two look similar in the data, so an error in one can get absorbed as a distortion in the other. To stop the fit from over-correcting, the ellipse eccentricity is kept within a plausible range, and a curvature penalty smooths out spikes that would otherwise come from sparse, outlier-heavy bins. The resulting elliptical profile is what gets integrated into the final volume.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/pointcloud_single_view_ellipses_bottom.png" alt="Point cloud with the fitted axis and elliptical cross-sections, viewed from below" style="width: 100%;" />
+  <img src={pointcloudSingleViewEllipsesBottom.src} alt="Point cloud with the fitted axis and elliptical cross-sections, viewed from below" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Point cloud with the fitted axis and the stacked-ellipse surface built around it.</figcaption>
 </figure>
 
@@ -67,7 +77,7 @@ That depth semi-axis is barely observed, the fit can't always tell a genuine cha
 The axisymmetry assumption is dropped entirely by fusing several views captured while moving the camera around the object: depth is estimated per view, SAM2 tracks the object mask across the sequence, and the resulting partial point clouds are chained with point-to-plane ICP and refined with pose graph optimization using loop closures between overlapping views.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/pointcloud_multi_view.png" alt="Point cloud fused from multiple views via ICP registration" style="width: 100%;" />
+  <img src={pointcloudMultiView.src} alt="Point cloud fused from multiple views via ICP registration" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Point cloud from several views, registered with ICP and fused into a single model.</figcaption>
 </figure>
 
@@ -88,7 +98,7 @@ data/frames/
 The on-device depth is fast to calculate, but noisy, especially at object boundaries. That motivated a second, offline depth source: [FoundationStereo](https://nvlabs.github.io/FoundationStereo/), a foundation model for stereo matching that produces much cleaner disparity maps from the same rectified pairs.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/00000007.png" alt="FoundationStereo depth estimate for an avocado" style="width: 100%;" />
+  <img src={foundationStereoDepth.src} alt="FoundationStereo depth estimate for an avocado" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">FoundationStereo's depth estimate; cleaner than the on-device depth, especially at object boundaries.</figcaption>
 </figure>
 
@@ -103,7 +113,7 @@ A client script streams a whole capture session. Left/right images are paired by
 An interactive viewer allows displaying the RGB image blended with a colorized depth map. The two images don't live on the same pixel grid: depth is computed on the **rectified left** camera's frame, while the color frame comes from the **RGB** camera frame, located a few centimeters away and with different intrinsics. Overlaying them directly would misalign every object by a parallax-dependent offset.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/depth_overlay.png" alt="RGB frame blended with a colorized depth map" style="width: 100%;" />
+  <img src={depthOverlay.src} alt="RGB frame blended with a colorized depth map" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">RGB frame blended with the depth map, warped onto the RGB pixel grid.</figcaption>
 </figure>
 
@@ -129,7 +139,7 @@ The viewer then lets you:
 - **Right-click** to drop SAM2 prompt points on an object, press `s` to segment it, then `v` to estimate its volume in milliliters.
 
 <figure style="max-width: 400px; margin: 0 auto;">
-  <img src="./media/segmentation.png" alt="SAM2 segmentation of the avocado" style="width: 100%;" />
+  <img src={segmentation.src} alt="SAM2 segmentation of the avocado" style="width: 100%;" />
   <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">SAM2 segmentation of the avocado from clicked prompt points.</figcaption>
 </figure>
 
