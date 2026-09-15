@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 1000 780"
+   font-family="Arial, Helvetica, sans-serif"
+   version="1.1"
+   id="svg15"
+   sodipodi:docname="diagram1.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   width="1000"
+   height="780"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview15"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.0961539"
+     inkscape:cx="405.05261"
+     inkscape:cy="421.9298"
+     inkscape:window-width="2496"
+     inkscape:window-height="1057"
+     inkscape:window-x="1976"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg15"
+     showgrid="false" />
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Distance end"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker19"
+       style="overflow:visible"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="strokeWidth">
+      <g
+         transform="scale(0.6)"
+         id="g19">
+        <path
+           d="m 0,-40 v 0"
+           id="path17" />
+        <path
+           d="M 0,0 -8,5 V -5 Z"
+           style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+           id="path18" />
+        <path
+           d="M 0,-8 V 40"
+           style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:square"
+           id="path19" />
+      </g>
+    </marker>
+    <marker
+       inkscape:stockid="Distance start"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker10"
+       style="overflow:visible"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <g
+         transform="scale(0.6)"
+         id="g10">
+        <path
+           d="m 0,-40 v 0"
+           id="path8" />
+        <path
+           d="M 0,0 8,5 V -5 Z"
+           style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+           sodipodi:nodetypes="ccccc"
+           id="path9" />
+        <path
+           d="M 0,-8 V 40"
+           style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:square"
+           id="path10" />
+      </g>
+    </marker>
+    <marker
+       inkscape:stockid="Distance start"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="DistanceStart"
+       style="overflow:visible"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <g
+         transform="scale(0.6)"
+         id="g13">
+        <path
+           d="m 0,-40 v 0"
+           id="path11" />
+        <path
+           d="M 0,0 8,5 V -5 Z"
+           style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+           sodipodi:nodetypes="ccccc"
+           id="path12" />
+        <path
+           d="M 0,-8 V 40"
+           style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:square"
+           id="path13" />
+      </g>
+    </marker>
+    <marker
+       inkscape:stockid="Distance end"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="DistanceEnd"
+       style="overflow:visible"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <g
+         transform="scale(0.6)"
+         id="g16">
+        <path
+           d="m 0,-40 v 0"
+           id="path14" />
+        <path
+           d="M 0,0 -8,5 V -5 Z"
+           style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+           id="path15" />
+        <path
+           d="M 0,-8 V 40"
+           style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:square"
+           id="path16" />
+      </g>
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Stop"
+       markerWidth="1"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="none">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1"
+         d="M 0,4 V -4"
+         id="path4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Stop"
+       markerWidth="1"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="none">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1"
+         d="M 0,4 V -4"
+         id="path3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Stop"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Stop"
+       markerWidth="1"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="none">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1"
+         d="M 0,4 V -4"
+         id="path23" />
+    </marker>
+    <marker
+       id="arrowStart"
+       markerWidth="10"
+       markerHeight="10"
+       refX="0"
+       refY="3"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M 9,0 V 6 L 0,3 Z"
+         fill="#e53935"
+         id="path1" />
+    </marker>
+    <marker
+       id="arrowEnd"
+       markerWidth="9"
+       markerHeight="6"
+       refX="0"
+       refY="3"
+       orient="auto"
+       markerUnits="strokeWidth"
+       viewBox="0 0 9 6"
+       preserveAspectRatio="xMidYMid">
+      <path
+         d="M 0,0 V 6 L 9,3 Z"
+         fill="#e53935"
+         id="path2" />
+    </marker>
+    <marker
+       id="arrowEndBlack"
+       markerWidth="9"
+       markerHeight="6"
+       refX="0"
+       refY="3"
+       orient="auto"
+       markerUnits="strokeWidth"
+       viewBox="0 0 9 6"
+       preserveAspectRatio="xMidYMid">
+      <path
+         d="M 0,0 V 6 L 9,3 Z"
+         fill="#111111"
+         id="path_arrowBlack" />
+    </marker>
+  </defs>
+  <!-- background -->
+  <!-- camera field-of-view cones (alpha-blended overlap) -->
+  <path
+     id="polygon2"
+     style="fill:#f5b942;fill-opacity:0.85"
+     d="M 324,668 24,30 h 610 z"
+     sodipodi:nodetypes="cccc" />
+  <path
+     id="polygon3"
+     style="fill:#4fa8de;fill-opacity:0.8"
+     d="M 624,668 324,30 h 610 z"
+     sodipodi:nodetypes="cccc" />
+  <!-- ground line -->
+  <line
+     x1="0.66667527"
+     y1="668"
+     x2="1000.0763"
+     y2="668"
+     stroke="#111111"
+     stroke-width="1.58067"
+     id="line3" />
+  <!-- camera baseline bar -->
+  <!-- Dv reference line (stereo-overlap boundary) -->
+  <line
+     x1="283.97986"
+     y1="354.35492"
+     x2="853.34485"
+     y2="354.35492"
+     stroke="#e53935"
+     stroke-width="0.93592"
+     opacity="0.7"
+     id="line4" />
+  <!-- F: frame width at the top -->
+  <line
+     x1="340.3559"
+     y1="63"
+     x2="917.17236"
+     y2="63"
+     stroke="#e53935"
+     stroke-width="2.07459"
+     marker-start="url(#arrowStart)"
+     marker-end="url(#arrowEnd)"
+     id="line7"
+     style="marker-start:url(#marker4);marker-end:url(#marker4)" />
+  <text
+     x="623"
+     y="57.438595"
+     text-anchor="middle"
+     font-size="24px"
+     font-weight="bold"
+     fill="#111111"
+     id="text7">F</text>
+  <!-- B: dead-band width -->
+  <line
+     x1="564"
+     y1="174.63158"
+     x2="864"
+     y2="174.63158"
+     stroke="#e53935"
+     stroke-width="2.36851"
+     marker-start="url(#arrowStart)"
+     marker-end="url(#arrowEnd)"
+     id="line_B"
+     style="stroke-width:2.14261;stroke-dasharray:none;marker-start:url(#marker3);marker-end:url(#Stop)" />
+  <text
+     x="717.74152"
+     y="165.1149"
+     text-anchor="middle"
+     font-size="24px"
+     font-weight="bold"
+     fill="#111111"
+     id="text10">B</text>
+  <!-- Dv: minimum stereo-overlap distance -->
+  <line
+     x1="854"
+     y1="355.14105"
+     x2="854"
+     y2="667.3974"
+     stroke="#e53935"
+     stroke-width="2.50013"
+     marker-start="url(#arrowStart)"
+     marker-end="url(#arrowEnd)"
+     id="line11"
+     style="marker-start:url(#Stop);marker-end:url(#Stop)" />
+  <text
+     x="871.89478"
+     y="532.29828"
+     text-anchor="middle"
+     font-size="22px"
+     font-weight="bold"
+     fill="#111111"
+     id="text11">D<tspan
+   font-size="14px"
+   baseline-shift="-4px"
+   id="tspan11">v</tspan></text>
+  <!-- Z: distance from camera plane -->
+  <line
+     x1="954.00739"
+     y1="63.179451"
+     x2="954.00739"
+     y2="667.38342"
+     stroke="#e53935"
+     stroke-width="2.51953"
+     marker-start="url(#arrowStart)"
+     marker-end="url(#arrowEnd)"
+     id="line12"
+     style="stroke-width:2.50257;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;marker-start:url(#Stop);marker-end:url(#Stop);paint-order:normal" />
+  <text
+     x="978"
+     y="356"
+     text-anchor="middle"
+     font-size="24px"
+     font-weight="bold"
+     fill="#111111"
+     id="text12">Z</text>
+  <!-- b: baseline distance between cameras -->
+  <line
+     x1="624"
+     y1="728"
+     x2="324"
+     y2="728"
+     stroke="#e53935"
+     stroke-width="2.5"
+     marker-start="url(#arrowStart)"
+     marker-end="url(#arrowEnd)"
+     id="line15"
+     style="stroke-width:2.492;stroke-dasharray:none;marker-start:url(#DistanceStart);marker-end:url(#DistanceEnd)" />
+  <text
+     x="474"
+     y="723"
+     text-anchor="middle"
+     font-size="22px"
+     font-weight="bold"
+     fill="#111111"
+     id="text15">b</text>
+  <!-- half-angle split line and HFOV/2 label (blue triangle) -->
+  <line
+     x1="624"
+     y1="668"
+     x2="624"
+     y2="350"
+     stroke="#111111"
+     stroke-width="1.5"
+     id="line_half" />
+  <path
+     d="M 624,528 A 140,140 0 0,1 685.15,542.06"
+     fill="none"
+     stroke="#111111"
+     stroke-width="1.5"
+     id="arc_half"
+     style="stroke-width:1.3;stroke-linecap:butt;stroke-miterlimit:3.6;stroke-dasharray:none;stroke-dashoffset:0;marker-start:url(#marker10);marker-end:url(#marker19);paint-order:normal" />
+  <text
+     x="760.20905"
+     y="557.3064"
+     text-anchor="end"
+     font-size="20px"
+     font-weight="bold"
+     fill="#111111"
+     id="text_half"
+     inkscape:transform-center-x="33.298244"
+     inkscape:transform-center-y="5.0175436">HFOV/2</text>
+</svg>

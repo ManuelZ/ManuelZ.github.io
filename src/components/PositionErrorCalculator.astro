@@ -1,0 +1,147 @@
+---
+
+---
+
+<div
+  class="not-prose my-6 p-5 border border-base-300 rounded-xl bg-base-200 max-w-sm"
+>
+  <h3 class="text-base font-semibold mb-4">Position Error Calculator</h3>
+
+  <label class="block mb-3 text-sm">
+    Target x-coordinate (mm)
+    <input
+      id="pe-x"
+      type="number"
+      value="100"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Depth z (mm)
+    <input
+      id="pe-z"
+      type="number"
+      value="600"
+      min="1"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Focal length &Omega; (pixels)
+    <input
+      id="pe-omega"
+      type="number"
+      value="456"
+      min="1"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Depth measurement error &delta;z (mm)
+    <input
+      id="pe-dz"
+      type="number"
+      value="1"
+      min="0"
+      step="0.1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Focal length calibration error &delta;&Omega; (pixels)
+    <input
+      id="pe-dOmega"
+      type="number"
+      value="30"
+      min="0"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-4 text-sm">
+    Pixel localization error &delta;u (pixels)
+    <input
+      id="pe-du"
+      type="number"
+      value="1"
+      min="0"
+      step="0.1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <button id="pe-btn" class="btn btn-primary btn-sm w-full">Calculate</button>
+
+  <div id="pe-results" class="mt-4 hidden">
+    <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+      Relative Error
+    </div>
+    <div class="text-sm font-mono space-y-1 mb-3">
+      <p id="pe-result-rel-z"></p>
+      <p id="pe-result-rel-omega"></p>
+    </div>
+    <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+      Absolute Error
+    </div>
+    <div class="text-sm font-mono space-y-1">
+      <p id="pe-result-abs-u"></p>
+      <p id="pe-result-dx-total"></p>
+    </div>
+  </div>
+  <p id="pe-error" class="mt-4 text-sm text-error hidden"></p>
+</div>
+
+<script>
+  const btn       = document.getElementById("pe-btn")!;
+  const resultsBox = document.getElementById("pe-results")!;
+  const errorEl   = document.getElementById("pe-error")!;
+  const resultRelZ     = document.getElementById("pe-result-rel-z")!;
+  const resultRelOmega = document.getElementById("pe-result-rel-omega")!;
+  const resultAbsU     = document.getElementById("pe-result-abs-u")!;
+  const resultDxTotal  = document.getElementById("pe-result-dx-total")!;
+
+  btn.addEventListener("click", () => {
+    const x      = parseFloat((document.getElementById("pe-x")      as HTMLInputElement).value);
+    const z      = parseFloat((document.getElementById("pe-z")      as HTMLInputElement).value);
+    const omega  = parseFloat((document.getElementById("pe-omega")  as HTMLInputElement).value);
+    const dz     = parseFloat((document.getElementById("pe-dz")     as HTMLInputElement).value);
+    const dOmega = parseFloat((document.getElementById("pe-dOmega") as HTMLInputElement).value);
+    const du     = parseFloat((document.getElementById("pe-du")     as HTMLInputElement).value);
+
+    if (
+      [x, z, omega, dz, dOmega, du].some(isNaN) ||
+      z <= 0 ||
+      omega <= 0 ||
+      dz < 0 ||
+      dOmega < 0 ||
+      du < 0
+    ) {
+      errorEl.textContent = "Enter valid values (z, Ω > 0; error terms ≥ 0).";
+      errorEl.classList.remove("hidden");
+      resultsBox.classList.add("hidden");
+      return;
+    }
+
+    errorEl.classList.add("hidden");
+
+    const relErrZ     = dz / z;
+    const relErrOmega = dOmega / (omega + dOmega);
+    const absErrU     = (du * z) / omega;
+    const dxTotal     = x * (dz / z - dOmega / omega) + (du * z) / omega;
+
+    resultRelZ.textContent     = `δx/x (δz)  = ${(relErrZ * 100).toFixed(3)} %`;
+    resultRelOmega.textContent = `δx/x (δΩ)  = ${(relErrOmega * 100).toFixed(3)} %`;
+    resultAbsU.textContent     = `δx   (δu)  = ${absErrU.toFixed(2)} mm`;
+    resultDxTotal.textContent  = `δx   total = ${dxTotal.toFixed(2)} mm`;
+
+    resultsBox.classList.remove("hidden");
+  });
+</script>

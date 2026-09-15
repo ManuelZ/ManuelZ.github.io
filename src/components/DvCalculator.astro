@@ -1,0 +1,187 @@
+---
+
+---
+
+<div
+  class="not-prose my-6 p-5 border border-base-300 rounded-xl bg-base-200 max-w-sm"
+>
+  <h3 class="text-base font-semibold mb-4">Stereo Camera Calculator</h3>
+
+  <label class="block mb-3 text-sm">
+    Baseline b (mm)
+    <input
+      id="dv-bl"
+      type="number"
+      value="75"
+      min="0"
+      step="0.1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Horizontal FOV (degrees)
+    <input
+      id="dv-hfov"
+      type="number"
+      value="73"
+      min="1"
+      max="179"
+      step="0.1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Camera width W (pixels)
+    <input
+      id="dv-w"
+      type="number"
+      value="640"
+      min="1"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Focal length &Omega; (pixels)
+    <input
+      id="dv-f"
+      type="number"
+      value="456"
+      min="1"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-3 text-sm">
+    Depth Z (mm)
+    <input
+      id="dv-z"
+      type="number"
+      value="600"
+      min="1"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <label class="block mb-4 text-sm">
+    Disparity increment &delta;d (pixels)
+    <input
+      id="dv-dd"
+      type="number"
+      value="1"
+      min="1"
+      step="1"
+      class="mt-1 input input-sm input-bordered w-full"
+    />
+  </label>
+
+  <button id="dv-btn" class="btn btn-primary btn-sm w-full">Calculate</button>
+
+  <div id="dv-results" class="mt-4 hidden space-y-3">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+        Minimum Stereo Depth Distance
+      </div>
+      <p id="dv-result-dv" class="text-sm font-mono"></p>
+    </div>
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+        Scene Width at Distance Z
+      </div>
+      <p id="dv-result-f" class="text-sm font-mono"></p>
+    </div>
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+        Dead-Band Width
+      </div>
+      <p id="dv-result-b" class="text-sm font-mono"></p>
+      <p id="dv-result-b-mm" class="text-sm font-mono"></p>
+    </div>
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+        Usable Frame Width
+      </div>
+      <p id="dv-result-usable" class="text-sm font-mono"></p>
+    </div>
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wide opacity-60 mb-1">
+        Depth Range Resolution
+      </div>
+      <p id="dv-result-resz" class="text-sm font-mono"></p>
+    </div>
+  </div>
+  <p id="dv-error" class="mt-4 text-sm text-error hidden"></p>
+</div>
+
+<script>
+  const btn = document.getElementById("dv-btn")!;
+  const resultsBox = document.getElementById("dv-results")!;
+  const errorEl = document.getElementById("dv-error")!;
+  const resultDv    = document.getElementById("dv-result-dv")!;
+  const resultF     = document.getElementById("dv-result-f")!;
+  const resultB     = document.getElementById("dv-result-b")!;
+  const resultBmm   = document.getElementById("dv-result-b-mm")!;
+  const resultUsable = document.getElementById("dv-result-usable")!;
+  const resultResZ  = document.getElementById("dv-result-resz")!;
+
+  btn.addEventListener("click", () => {
+    const b = parseFloat(
+      (document.getElementById("dv-bl") as HTMLInputElement).value,
+    );
+    const HFOV = parseFloat(
+      (document.getElementById("dv-hfov") as HTMLInputElement).value,
+    );
+    const W = parseFloat(
+      (document.getElementById("dv-w") as HTMLInputElement).value,
+    );
+    const f = parseFloat(
+      (document.getElementById("dv-f") as HTMLInputElement).value,
+    );
+    const z = parseFloat(
+      (document.getElementById("dv-z") as HTMLInputElement).value,
+    );
+    const dd   = parseFloat(
+      (document.getElementById("dv-dd")   as HTMLInputElement).value,
+    );
+
+    if (
+      [b, HFOV, W, f, z, dd].some(isNaN) ||
+      HFOV <= 0 ||
+      HFOV >= 180 ||
+      W <= 0 ||
+      f <= 0 ||
+      z <= 0 ||
+      dd <= 0
+    ) {
+      errorEl.textContent = "Enter valid positive values (0° < HFOV < 180°).";
+      errorEl.classList.remove("hidden");
+      resultsBox.classList.add("hidden");
+      return;
+    }
+
+    errorEl.classList.add("hidden");
+
+    const halfHFOV_rad = (HFOV / 2) * (Math.PI / 180);
+
+    const Dv    = (b / 2) * Math.tan((90 - HFOV / 2) * (Math.PI / 180));
+    const F     = 2 * z * Math.tan(halfHFOV_rad);
+    const B      = (W * Dv) / z;
+    const Bmm    = 2 * Dv * Math.tan(halfHFOV_rad);
+    const usable = Math.max(W - B, 0);
+    const resZ   = (z ** 2 / (f * b)) * dd;
+
+    resultDv.textContent     = `Dv      = ${Dv.toFixed(2)} mm`;
+    resultF.textContent      = `F       = ${F.toFixed(2)} mm`;
+    resultB.textContent      = `B       = ${B.toFixed(2)} px`;
+    resultBmm.textContent    = `B       = ${Bmm.toFixed(2)} mm`;
+    resultUsable.textContent = `usable  = ${usable.toFixed(2)} px`;
+    resultResZ.textContent   = `res_z   = ${resZ.toFixed(2)} mm`;
+
+    resultsBox.classList.remove("hidden");
+  });
+</script>
