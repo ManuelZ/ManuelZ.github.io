@@ -1,0 +1,164 @@
+---
+title: "Stereo Vision: Error Propagation"
+description: "Quantifying how errors in depth, focal length calibration, and pixel localization propagate into the accuracy of a reconstructed point's position and the distance between two points, for stereo camera pairs."
+pubDate: "Sep 15 2026"
+heroImage: "fig4a.png"
+tags: ["Computer Vision", "Stereo Vision", "Camera Calibration", "Error Analysis"]
+---
+
+import PositionErrorCalculator from "../../../components/PositionErrorCalculator.astro";
+import MutualDistanceErrorCalculator from "../../../components/MutualDistanceErrorCalculator.astro";
+import fig4a from "./fig4a.png";
+import fig4b from "./fig4b.png";
+import fig4c from "./fig4c.png";
+
+Once a target's 3D position is reconstructed from a stereo pair (see [Stereo Vision: Geometry and 3D Reconstruction](/blog/stereo-vision-geometry-and-3d-reconstruction) for the derivation of $X = u_L Z/\Omega$, $Y = v_L Z/\Omega$, and $Z = \Omega b/d$), the accuracy of that position depends on how well the model's inputs are known. This post quantifies how errors in depth, focal length calibration, and pixel localization propagate into the accuracy of a reconstructed point's position, and into the distance between two reconstructed points. Interactive calculators are included throughout.
+
+### Variables
+
+| Symbol | Name | Units | Description |
+|--------|------|-------|-------------|
+| $b$ | Baseline | mm | Distance between the two camera optical centers |
+| $\Omega$ | Focal length | pixels | Focal length of the camera |
+| $Z$ | Depth | mm | Distance from the camera plane to an object |
+| $u_L$, $v_L$ | Image coordinates | pixels | Horizontal/vertical pixel coordinate of a point in the left image, relative to the principal point |
+| $X$, $Y$, $Z$ | 3D coordinates | mm | Coordinates of a reconstructed point in the left camera's coordinate system |
+| $\delta Z$ | Depth measurement error | mm | Uncertainty in the measured or estimated depth $Z$ |
+| $\delta\Omega$ | Focal length calibration error | pixels | Difference between the calibrated and true focal length |
+| $\delta u_L$, $\delta v_L$ | Pixel localization error | pixels | Uncertainty in localizing a target's projection on the sensor |
+| $\delta X$, $\delta Y$ | Position error | mm | Resulting error on the reconstructed $X$, $Y$ coordinates |
+| $R$, $r$ | Mutual distance | mm, pixels | Real-world distance between two targets at the same depth $Z$, and pixel distance between their projections |
+| $\Delta X$, $\Delta Y$ | Inter-target distance | mm | Distance between two targets, projected onto the $XZ$/$YZ$-plane |
+| $\delta R$, $\delta\Delta X$, $\delta\Delta Y$ | Mutual distance error | mm | Resulting error on $R$, $\Delta X$, $\Delta Y$ |
+
+## Error on Absolute Position of Point P (2D)
+
+**A lot of the text below is reproduced, near verbatim, from [1]**.
+
+Once a target's position is reconstructed from the pinhole model, the accuracy of that position depends on how well the model's inputs are known. Three independent sources of error propagate into the reconstructed coordinates:
+
+1. **Depth measurement error** ($\delta Z$): the distance $Z$ itself is measured or estimated with some uncertainty.
+2. **Focal length calibration error** ($\delta\Omega$): the calibrated focal length differs from the true one.
+3. **Pixel localization error** ($\delta u_L$): the target's projection on the sensor is localized with some pixel-level uncertainty.
+
+The point of separating these three sources is system design: $\delta X$ can be kept under control by choosing the right setup parameters. If $c$ is the maximum acceptable error on $\delta X$, and $\delta u_L \sim 1\,\text{px}$ is fixed, then $Z$ and $\Omega$ must be chosen so that $Z/\Omega < c$. Each of the three sources places a different constraint on the setup (depth-sensor accuracy, focal-length calibration tolerance, sensor resolution and lens distortion correction), and knowing how each propagates into $\delta X$ makes it possible to choose these parameters deliberately, rather than tuning them blindly.
+
+All three follow the same recipe: a small error $\delta q$ in one input $q$ nudges $X$ by (how sensitive $X$ is to $q$) times (the size of the error), i.e. $\partial X/\partial q \cdot \delta q$, and the three nudges add up to give the total error $\delta X$. Each variable is worked through below on its own, and the pieces are assembled into the combined formula for $\delta X$ afterward.
+
+### Error on Depth Measurement $\delta Z$
+
+$\delta Z$ comes from whatever method supplies the depth value, either directly or indirectly:
+
+- **Direct**: rangefinder sensor noise, GPS or barometric altitude noise and drift.
+- **Indirect**: disparity error when $Z$ is derived from a stereo pair, or Digital Elevation Model (DEM) interpolation and vertical-accuracy limits when $Z$ comes from a terrain model.
+
+When $Z$ is derived from a stereo pair, one source of disparity error is quantization: each pixel coordinate $x_L$, $x_R$ is localized only to within $\pm\delta/2$ of its true position, where $\delta$ is the image sampling interval (i.e., the physical spacing between adjacent pixel centers on the image sensor). The disparity $d = x_L - x_R$ therefore inherits an error of up to $\pm\delta$, which propagates into an error on the estimated range $Z$ [2]. 
+This quantization is a lower bound: correspondence errors, rectification error and occlusion at object boundaries can add further error to the disparity estimate.
+
+Consider the case when $Z$ is directly measured with an error $\delta Z$. Given a target $P \equiv (X, Y, Z)$ and its image-plane projection $Q$ (the point at coordinate $u_L$), the target is reconstructed as $P'$ on the $(Z + \delta Z)$-plane, on the ray that starts at the optical center $O$ and passes through $Q$ and $P$. By similarity of triangles:
+
+$$
+\frac{\delta X}{X} = \frac{\delta Z}{Z}
+$$
+
+The ratio $\delta Z / Z$ is constant for all targets in the field of view, so the relative error $\delta X / X = \delta Z / Z$ is the same across the image. The absolute error $\delta X$ scales with $X$: targets farther from the optical axis have larger absolute error, but the same relative error. In practice, if an instrument with 1 mm accuracy is used at $Z = 10\,\text{cm}$, the relative error is $0.01$; at $Z = 10\,\text{m}$ it drops to $0.0001$.
+
+<figure style="max-width: 750px; margin: 0 auto;">
+  <img src={fig4a.src} alt="Diagram of the error on absolute position due to depth error, showing target P reconstructed as P' on the shifted depth plane" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Modified from: Fig. 4a (panel showing the error on $z$), [1]</figcaption>
+</figure>
+
+### Error on Focal Length $\delta\Omega$
+
+When the focal length is calibrated with an error $\delta\Omega$, the sensor sits at $\Omega + \delta\Omega$ instead of $\Omega$. From similar triangles, $X/Z = u_L/\Omega$ and $(X + \delta X)/Z = u_L/(\Omega + \delta\Omega)$, giving:
+
+$$
+\frac{\delta X}{X} = -\frac{\delta\Omega}{\Omega + \delta\Omega}
+$$
+
+The negative sign means an overestimated focal length compresses the retrieved position toward the center. A calibration error of $\delta\Omega = 30\,\text{px}$ on a $\Omega = 3000\,\text{px}$ lens produces a 1 % relative error on $X$.
+
+<figure style="max-width: 750px; margin: 0 auto;">
+  <img src={fig4b.src} alt="Diagram of the error on absolute position due to focal length error, showing target P reconstructed as P' when the sensor plane shifts" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Modified from: Fig. 4b (panel showing the error on $\Omega$), [1]</figcaption>
+</figure>
+
+### Error on Pixel Localization $\delta u_L$
+
+When the projection of a target is localized with a pixel error $\delta u_L$, the retrieved position shifts by:
+
+$$
+\delta X = \frac{\delta u_L \cdot Z}{\Omega}
+$$
+
+Unlike the previous two sources, this error does not produce a constant relative error: it is independent of $X$ and grows with $Z/\Omega$. At $Z = 100\,\text{m}$ and $\Omega = 3000\,\text{px}$, a segmentation error of $\delta u_L = 3\,\text{px}$ yields $\delta X = 0.1\,\text{m}$. For a target at $X = 1\,\text{m}$ this is a 10 % relative error; at $X = 10\,\text{m}$ it drops to 1 %. The ratio $Z/\Omega$ is therefore the key design parameter: to keep $\delta X$ below a threshold $c$ with $\delta u_L \sim 1\,\text{px}$, one must choose $Z/\Omega < c$.
+
+Substituting $Z/\Omega = X/u_L$ would give $\delta X = X\,\delta u_L/u_L$, which looks like a relative-error expression but is not one: $u_L$ changes from target to target, so $\delta u_L/u_L$ does not collapse to a single constant the way $\delta Z/Z$ and $\delta \Omega/\Omega$ do. The $Z/\Omega$ form is kept instead because it isolates the fixed system parameters and makes the constant-absolute-error behavior explicit.
+
+Since the pinhole model does not include distortion, $\delta u_L$ encompasses both the segmentation error due to image noise and the localization error that arises when lens distortion coefficients are not properly calibrated.
+
+<figure style="max-width: 750px; margin: 0 auto;">
+  <img src={fig4c.src} alt="Diagram of the error on absolute position due to pixel localization error, showing target P reconstructed as P' from a shifted image coordinate" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Modified from: Fig. 4c (panel showing the error on $u_L$), [1]</figcaption>
+</figure>
+
+### Combined Error (2D)
+
+The same three results can be reached algebraically, by taking the partial derivative of $X = u_L Z/\Omega$ with respect to each variable and multiplying by that variable's small error:
+
+$$
+\begin{aligned}
+\frac{\partial X}{\partial Z} \delta Z &= \delta X = \delta Z \frac{u_L}{\Omega} = X \frac{\delta Z}{Z} \\[10pt]
+\frac{\partial X}{\partial \Omega} \delta \Omega &= \delta X = -\delta \Omega \frac{u_L}{\Omega} \frac{Z}{\Omega} = -X \frac{\delta \Omega}{\Omega} \\[10pt]
+\frac{\partial X}{\partial u_L} \delta u_L &= \delta X = \delta u_L \frac{Z}{\Omega} \\[10pt]
+\end{aligned}
+$$
+
+This matches the geometric derivations above term by term. In the general case the three contributions combine to:
+
+$$
+\delta X = X\!\left(\frac{\delta Z}{Z} - \frac{\delta\Omega}{\Omega}\right) + \delta u_L \cdot \frac{Z}{\Omega}
+$$
+
+For targets at the edge of the field of view (large $X$), the dominant term is the relative part from $\delta Z$ and $\delta\Omega$; for targets near the optical axis (small $X$), the pixel-localization term $\delta u_L \cdot Z / \Omega$ dominates. This is because the first term scales with $X$ while the second one, as shown above, does not, so as $X$ shrinks toward zero the constant $\delta u_L \cdot Z/\Omega$ term is all that remains.
+
+The same reasoning applies to the $Y$ coordinate by replacing $X \to Y$ and $\delta u_L \to \delta v_L$:
+
+$$
+\delta Y = Y\!\left(\frac{\delta Z}{Z} - \frac{\delta\Omega}{\Omega}\right) + \delta v_L \cdot \frac{Z}{\Omega}
+$$
+
+<PositionErrorCalculator />
+
+## Error on Mutual Distances Between Targets (2D)
+
+The same method applies to a pair of points instead of a single one, under the same assumption as before: both targets lie on the same depth plane $Z$, so $R$ is their distance within that plane rather than a general 3D distance. By similarity of triangles, $R$ and the pixel distance $r$ between their projections satisfy $R = r\,Z/\Omega$, the same relationship as $X = u_L Z/\Omega$, with $R$ and $r$ in place of $X$ and $u_L$. The error $\delta R$ follows from differentiating with respect to $Z$, $\Omega$, and $r$:
+
+$$
+\delta R = R\!\left(\frac{\delta Z}{Z} - \frac{\delta\Omega}{\Omega}\right) + \frac{Z}{\Omega}\,\delta r
+$$
+
+Projected onto the $XZ$-plane, the equivalent expression for the inter-target distance $\Delta X$ is:
+
+$$
+\delta\Delta X = \Delta X\!\left(\frac{\delta Z}{Z} - \frac{\delta\Omega}{\Omega}\right) + \frac{Z}{\Omega}\,\delta\Delta u
+$$
+
+The first two terms (from $\delta Z$ and $\delta\Omega$) produce the same constant relative error on inter-target distances as on absolute positions. The absolute error $\delta\Delta X$ therefore grows with $\Delta X$: pairs of targets that are far apart are more affected than nearby pairs.
+
+The third term, $Z\,\delta\Delta u / \Omega$, does not depend on $\Delta X$. As with $\delta X$, it can be controlled by choosing a setup with the appropriate ratio $Z/\Omega$.
+
+The same reasoning on the $YZ$-plane gives:
+
+$$
+\delta\Delta Y = \Delta Y\!\left(\frac{\delta Z}{Z} - \frac{\delta\Omega}{\Omega}\right) + \frac{Z}{\Omega}\,\delta\Delta v
+$$
+
+Combining $\delta\Delta X$ and $\delta\Delta Y$ recovers the general expression for $\delta R$ above. For large $R$ the dominant term is the constant relative error $\delta Z/Z - \delta\Omega/\Omega$; for small $R$ the dominant term is $\delta r\,Z/\Omega$, which can be kept small by choosing the proper $Z/\Omega$ ratio.
+
+<MutualDistanceErrorCalculator />
+
+## References
+
+- [1] A. Cavagna et al., “Error control in the set-up of stereo camera systems for 3d animal tracking,” 2015, doi: 10.48550/ARXIV.1510.01070.
+- [2] J. J. Rodriguez and J. K. Aggarwal, “Stochastic analysis of stereo quantization error,” IEEE Trans. Pattern Anal. Machine Intell., vol. 12, no. 5, pp. 467–470, May 1990, doi: 10.1109/34.55106.
