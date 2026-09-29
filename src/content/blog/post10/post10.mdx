@@ -1,0 +1,163 @@
+---
+title: "Automating the data pipeline for an ongoing computer vision project"
+description: "Automating the loop of extracting frames, auto-annotating, reviewing in CVAT, checking dataset quality, and training and comparing YOLO models, with every model traceable to its data and code."
+pubDate: "Sep 28 2026"
+heroImage: "./media/embeddings.jpg"
+tags: ["Object Detection", "FiftyOne", "CVAT", "YOLO", "MLOps", "Data Curation"]
+---
+
+import embeddings from "./media/embeddings.jpg";
+
+When working on an object detection problem, I find myself repeating the same workflow over and over to improve the model, as shown below. It's assumed that an initial trained model is already available.
+
+- Receive new raw data in the form of videos
+  - Extract frames at a fixed FPS
+  - Load the frames into FiftyOne
+  - Select a subset to review
+    - Auto-annotate the subset using a trained model
+    - Upload the automatic annotations to CVAT
+    - Manually review and fix the automatic annotations
+    - Download the corrected annotations from CVAT
+    - Assess the quality of the annotations
+    - Export the FiftyOne dataset to a local YOLO folder
+    - Merge the subset into the main dataset
+    - Make sure train, val and test come from the same distribution
+    - Zip and upload the dataset to S3
+    - Download and unzip the dataset on the training machine
+    - Train a new model
+    - Report the training performance
+    - Save the training artifacts to S3
+
+Most of these steps are automated in code, so repeating them across many rounds is fast and safe. The automation is built around these tools:
+
+- **FiftyOne** to browse, tag, and query the images.
+- **CVAT**, through its Python SDK, to review and fix annotations.
+- **Ultralytics YOLO** and **LibreYOLO** to train the detection models.
+- **Google Colab** as the training machine.
+- **Amazon S3** to store the datasets and training artifacts.
+
+Here's how each step works.
+
+## Extract frames at a fixed FPS
+
+I sample frames from the raw videos at a chosen rate, instead of using every frame. Consecutive video frames are nearly identical, so this keeps the dataset from filling up with near-duplicate images.
+
+## Load the frames into FiftyOne
+
+I load the extracted frames into a FiftyOne dataset. FiftyOne is a tool for browsing and querying image datasets, and from here on it's where all the frames of this batch live. Every later step, from picking what to review to checking the corrected labels, works on this one dataset instead of on loose files.
+
+## Select a subset to review
+
+A new batch of video can produce far more frames than I want to review at once. So I work through it in small subsets. This:
+
+- keeps each review session short,
+- lets me retrain and check progress between rounds,
+- makes the dataset grow at a pace I control.
+
+To keep track of all this, I use FiftyOne tags. A tag is a short text label attached to an image, and I use them to record where each image is in the process:
+
+- A subset tag, like `round2`, marks the images that belong to that subset.
+- A `pushed_to_cvat` tag marks images that were already sent for review.
+
+Every later step (auto-annotation, upload, export) finds its images through these tags, so they need to be right.
+
+To pick the next subset, I randomly take a number (or a fraction) of the images that don't have the `pushed_to_cvat` tag yet, and give them the subset tag. The random seed is fixed, so running it again gives the same selection. Nothing is sent to CVAT yet, so I can look at the subset in FiftyOne first.
+
+## Auto-annotate the subset using a trained model
+
+Drawing every box by hand is slow. So before reviewing a subset, I run my current best model over it and save its predictions as draft labels. Reviewing then means fixing the model's mistakes instead of starting from an empty image.
+
+Only the selected subset gets labeled, not the whole batch. That way each subset is labeled by the newest model available at the time.
+
+## Upload the automatic annotations to CVAT
+
+Using the CVAT SDK, I create a new CVAT task with the images that have the subset tag, and name the task after that tag. Those images then get the `pushed_to_cvat` tag, so they can't be selected again.
+
+## Manually review and fix the automatic annotations
+
+Every frame in the task gets reviewed by hand in CVAT.
+
+## Download the corrected annotations from CVAT
+
+The corrected annotations are pulled from CVAT and stored locally in the FiftyOne dataset, in the ground truth field. The model's original predictions and the human's corrections stay in separate fields instead of one overwriting the other, so I can compare them later and see how much the model actually got right.
+
+## Assess the quality of the annotations
+
+Before trusting a batch of corrected annotations, I run a few automated checks directly against the FiftyOne dataset, without exporting anything to disk first:
+
+- Rule-based checks for expected object counts per class, expected class co-occurrence, and outlier box sizes.
+- Detection of duplicate boxes of the same class, and overlapping boxes of different classes.
+
+## Export the FiftyOne dataset to a local YOLO folder
+
+The trainer can't read a FiftyOne dataset directly. So once a subset is done, I export it to a folder of images and YOLO label files.
+
+## Merge the subset into the main dataset
+
+I merge the new subset into the main training dataset by hand. The export is one flat folder, while the main dataset has separate train, validation and test folders. So merging means deciding which split each new frame goes to, and copying its image and label file into that split's folders.
+
+Putting frames from the same video in different splits would leak information between them, since those frames look almost identical, so frames must be assigned to splits by video; the details of how are left out of this post.
+
+The class order must be the same in both. If it isn't, class ids get swapped with no error. You only notice later, when the model keeps confusing two classes.
+
+## Make sure train, val and test come from the same distribution
+
+To check the result, I load the main dataset into a second FiftyOne dataset, used only for this comparison. Each image is tagged with its split, so I can look at the splits side by side:
+
+- How each split's boxes are spread across classes. A class can look fine overall and still be rare in one split.
+- A 2D map of image embeddings, colored by split. It shows whether all splits cover the same kinds of images, or whether one split sits apart.
+- Near-duplicate images that ended up in different splits. These leak information between training and evaluation and make the metrics look better than they are.
+
+<figure style="max-width: 750px; margin: 0 auto;">
+  <img src={embeddings.src} alt="2D map of image embeddings in FiftyOne, colored by train, val and test split" style="width: 100%;" />
+  <figcaption style="text-align: center; font-style: italic; font-size: 0.9em;">Image embeddings in FiftyOne, colored by split</figcaption>
+</figure>
+
+## Zip and upload the dataset to S3
+
+Before zipping, the main dataset folder is checked:
+
+- The folder structure is correct.
+- Every image has a label file.
+- `data.yaml` is valid.
+- All class ids are in range.
+
+This catches problems before training instead of during it. If the checks pass, the folder is zipped and uploaded to S3, where the training machine can download it. The access keys only have access to that one bucket.
+
+## Download and unzip the dataset on the training machine
+
+The training machine downloads the dataset with the same S3 code used for the upload.
+
+After unzipping, I take a content hash of the dataset. That hash becomes part of the training artifacts, so a given trained model can always be traced back to the exact dataset it was trained on.
+
+## Train a new model
+
+On the training side, custom callbacks log metrics per epoch and plot them live during training, instead of only after it finishes. After training, I re-validate the model on the validation split and read off each class's best-F1 confidence threshold, instead of keeping the fixed threshold used during training.
+
+## Report the training performance
+
+To decide whether a new model is actually an improvement, I compare it against the previous one in two steps:
+
+- **On the validation split**, I sweep the confidence threshold for both models to get AP50, AP50-95, and the best-F1 threshold for each class, which I then use as the final thresholds.
+- **On the test split**, I score both models only at the thresholds chosen on validation. Picking a threshold on the same data you report on makes the numbers look better than they are, so the tool refuses to sweep on test and requires the thresholds up front.
+
+Next to each best threshold, I also report the range of thresholds where F1 stays within 0.1% of its peak. That peak is often flat, so two runs can pick best thresholds 0.05 apart while their F1 differs by less than 0.001, and a difference in best thresholds only matters when those ranges don't overlap.
+
+Alongside the numbers, I look at where the two models disagree, side by side in the FiftyOne App. A separate FiftyOne-based tool shows one class's false positives, false negatives, and near-misses for manual review, since that's usually where a model's real failure modes live.
+
+Retraining on one corrected subset can produce a better model before the rest of the batch has even been reviewed. When that happens, the next subset gets its draft labels from this better model, so there's less to fix in each round. This closes the loop back to selecting the next subset.
+
+## Save the training artifacts to S3
+
+Each training run is uploaded to S3 with its checkpoints, metrics, and metadata (git commit, host, timestamp, framework version, GPU). That way I always know which code and hardware produced a given model.
+
+## Conclusion
+
+Automating these steps gives me:
+
+- **Small, measurable rounds.** Running a full round takes a few commands, so I can label a subset, retrain, and check the result, instead of committing to thousands of images that may not be needed.
+- **Fewer mistakes.** The same checks run automatically every round, so errors like out-of-range class ids or missing label files get caught before training.
+- **Traceable models.** The dataset hash and the git commit are saved with every run without me having to remember, so I always know which data and code produced a given model.
+- **A model that keeps improving, and less labeling work each round.** Every round of corrected data trains a better model, and that model automatically writes the draft labels for the next subset, so each round leaves fewer boxes to fix.
+- **A free check on new data.** The download from CVAT keeps the model's predictions and my corrections in separate fields, so every reviewed subset also shows how well the model does on footage it hasn't seen.
+- **Honest comparisons by default.** The comparison tool refuses to pick thresholds on the test split, so I can't accidentally report numbers that look better than they are.
