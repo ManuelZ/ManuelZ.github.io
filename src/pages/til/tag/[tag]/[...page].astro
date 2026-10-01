@@ -1,0 +1,26 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import TilFeed from "@components/TilFeed.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths({ paginate }) {
+  const entries = await getCollection("til");
+  entries.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const all_tags = [...new Set(entries.flatMap((entry) => entry.data.tags || []))];
+
+  return all_tags.flatMap((tag) => {
+    const filtered = entries.filter((entry) => entry.data.tags?.includes(tag));
+    return paginate(filtered, {
+      params: { tag: tag.toLowerCase().replace(/\s+/g, "-") },
+      props: { tagName: tag },
+      pageSize: 15,
+    });
+  });
+}
+
+const { page, tagName } = Astro.props;
+---
+
+<BaseLayout title={"TIL - " + tagName} sideBarActiveItemID="til">
+  <TilFeed page={page} heading={"Today I Learned - " + tagName} />
+</BaseLayout>

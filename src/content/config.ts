@@ -37,8 +37,23 @@ export const projectsSchema = (image: () => any) =>
       .optional(),
   });
 
+// TIL entries are short notes: no hero image, description optional
+export const tilSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  pubDate: z.coerce.date(),
+  updatedDate: z.string().optional(),
+  tags: z
+    .array(z.string())
+    .refine((items) => new Set(items).size === items.length, {
+      message: "tags must be unique",
+    })
+    .optional(),
+});
+
 export type BlogSchema = z.infer<ReturnType<typeof blogSchema>>;
 export type ProjectsSchema = z.infer<ReturnType<typeof projectsSchema>>;
+export type TilSchema = z.infer<typeof tilSchema>;
 
 const blogCollection = defineCollection({
   schema: ({ image }) => blogSchema(image),
@@ -46,8 +61,12 @@ const blogCollection = defineCollection({
 const projectsCollection = defineCollection({
   schema: ({ image }) => projectsSchema(image),
 });
+const tilCollection = defineCollection({
+  schema: tilSchema,
+});
 
 export const collections = {
   blog: blogCollection,
   projects: projectsCollection,
+  til: tilCollection,
 };

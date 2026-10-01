@@ -1,0 +1,35 @@
+---
+import { type CollectionEntry } from "astro:content";
+import dayjs from "dayjs";
+import Badge from "./Badge.astro";
+import createSlug from "../lib/createSlug";
+
+interface Props {
+  entry: CollectionEntry<"til">;
+  // Title links to the entry's own page when shown in the feed
+  linkTitle?: boolean;
+}
+
+const { entry, linkTitle = true } = Astro.props;
+const { title, pubDate, updatedDate, tags = [] } = entry.data;
+const url = "/til/" + createSlug(title, entry.slug);
+const { Content } = await entry.render();
+---
+
+<article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
+  <time class="text-sm opacity-70" datetime={pubDate.toISOString()}>
+    {dayjs(pubDate).format("MMM D, YYYY")}
+  </time>
+  <h2 class="mt-1 mb-2 text-2xl font-bold">
+    {linkTitle ? <a href={url} class="no-underline hover:underline">{title}</a> : title}
+  </h2>
+  {
+    tags.map((tag) => (
+      <Badge href={`/til/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`} class="mr-2">
+        {tag}
+      </Badge>
+    ))
+  }
+  {updatedDate && <div class="text-sm">Last updated on <time>{updatedDate}</time></div>}
+  <Content />
+</article>

@@ -1,0 +1,32 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TilEntry from "../../components/TilEntry.astro";
+import createSlug from "../../lib/createSlug";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("til");
+  return entries.map((entry) => ({
+    params: { slug: createSlug(entry.data.title, entry.slug) },
+    props: { entry },
+  }));
+}
+
+const { entry }: { entry: CollectionEntry<"til"> } = Astro.props;
+---
+
+<BaseLayout
+  title={"TIL: " + entry.data.title}
+  description={entry.data.description}
+  ogType="article"
+  sideBarActiveItemID="til"
+>
+  <main class="md:flex md:justify-center">
+    <div class="max-w-[750px] w-full">
+      <a href="/til/" class="link text-sm">&larr; All TIL entries</a>
+      <div class="mt-4">
+        <TilEntry entry={entry} linkTitle={false} />
+      </div>
+    </div>
+  </main>
+</BaseLayout>
